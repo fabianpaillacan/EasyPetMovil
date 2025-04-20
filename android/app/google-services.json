@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "304593493789",
+    "project_id": "app-movil-mascotas",
+    "storage_bucket": "app-movil-mascotas.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:304593493789:android:a65a9f56188b4802a7cbf4",
+        "android_client_info": {
+          "package_name": "com.example.easypet"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBwrP2dmHimHF-jfCZ7dW3h1SvpebNUzjY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
