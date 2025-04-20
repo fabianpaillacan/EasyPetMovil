@@ -1,5 +1,5 @@
 @echo off
-SET VENV=venv
+SET VENV=.venv
 
 IF "%1"=="install" (
     echo Creating virtual environment...
@@ -36,8 +36,11 @@ IF "%1"=="clean" (
 IF "%1"=="format" (
     call %VENV%\Scripts\activate.bat
     echo Formatting code...
-    python -m black backend/ --line-lenght 88
+    python -m black backend/ --line-length 88
+    python -m isort backend/
+    python -m flake8 backend/ --exit-zero
     dart format .
+    dart fix --apply
     echo Done!
     goto end
 )

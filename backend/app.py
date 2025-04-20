@@ -1,15 +1,10 @@
+import logging
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import logging
-from rich.logging import RichHandler
+
 from backend.firebase import config
 from backend.routes import auth
-
-# Logger bonito
-logging.basicConfig(
-    level=logging.DEBUG, format="%(message)s", datefmt="[%X]", handlers=[RichHandler()]
-)
-logger = logging.getLogger("rich")
 
 # App
 app = FastAPI()

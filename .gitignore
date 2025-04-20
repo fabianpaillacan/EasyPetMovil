@@ -47,3 +47,17 @@ app.*.map.json
 /app-movil-mascotas-39716d81f712.json
 /lib/firebase_options.dart
 /.env
+
+# lets add python related files to the gitignore
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+*.egg-info
+*.egg
+*.whl
+*.env
+# ignoire venv folder
+venv    
+# ignore pycache folder
+__pycache__/
