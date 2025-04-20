@@ -3,7 +3,6 @@ import 'package:easypet/features/auth/screens/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:easypet/features/auth/screens/login_screen.dart';
 
-
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
@@ -28,9 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login'),
-      ),
+      appBar: AppBar(title: const Text('Login')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -54,10 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
               obscureText: true,
             ),
             const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: handleLogin,
-              child: const Text('Login'),
-            ),
+            ElevatedButton(onPressed: handleLogin, child: const Text('Login')),
             const SizedBox(height: 16),
             Text(result),
             Text(
@@ -69,7 +63,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 // Navegar a la pantalla de registro
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                  MaterialPageRoute(
+                    builder: (context) => const RegisterScreen(),
+                  ),
                 );
               },
               child: const Text('Registrarse'),

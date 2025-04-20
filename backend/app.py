@@ -7,10 +7,7 @@ from backend.routes import auth
 
 # Logger bonito
 logging.basicConfig(
-    level=logging.DEBUG,
-    format="%(message)s",
-    datefmt="[%X]",
-    handlers=[RichHandler()]
+    level=logging.DEBUG, format="%(message)s", datefmt="[%X]", handlers=[RichHandler()]
 )
 logger = logging.getLogger("rich")
 
@@ -26,5 +23,5 @@ app.add_middleware(
 )
 
 # Registrar rutas
-#app.include_router(auth.router, prefix="/auth", tags=["auth"])
+# app.include_router(auth.router, prefix="/auth", tags=["auth"])
 app.include_router(auth.router)

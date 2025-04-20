@@ -6,7 +6,16 @@ IF "%1"=="install" (
     python -m venv %VENV%
     call %VENV%\Scripts\activate.bat
     echo Installing dependencies...
-    pip install -r requirements_back_end.txt
+    pip install -r backend\requirements.txt
+    echo Done!
+    goto end
+)
+
+
+IF "%1"=="update" (
+    call %VENV%\Scripts\activate.bat
+    echo Updating dependencies...
+    pip install --upgrade -r backend\requirements.txt
     echo Done!
     goto end
 )
@@ -20,6 +29,16 @@ IF "%1"=="run" (
 IF "%1"=="clean" (
     echo Removing virtual environment...
     rmdir /s /q %VENV%
+    goto end
+)
+
+
+IF "%1"=="format" (
+    call %VENV%\Scripts\activate.bat
+    echo Formatting code...
+    python -m black backend/ --line-lenght 88
+    dart format .
+    echo Done!
     goto end
 )
 

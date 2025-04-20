@@ -6,10 +6,11 @@ class AuthController {
   static Future<String> login(String email, String password) async {
     try {
       // Autenticación con Firebase
-      final userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email.trim(),
-        password: password.trim(),
-      );
+      final userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(
+            email: email.trim(),
+            password: password.trim(),
+          );
 
       // Obtener el token del usuario
       final idToken = await userCredential.user?.getIdToken();
@@ -19,7 +20,9 @@ class AuthController {
 
       // Hacer ping al backend FastAPI
       final response = await http.get(
-        Uri.parse('http://10.0.2.2:8000/ping'), // Asegúrate de usar esto solo en emulador
+        Uri.parse(
+          'http://10.0.2.2:8000/ping',
+        ), // Asegúrate de usar esto solo en emulador
         headers: {'Authorization': 'Bearer $idToken'},
       );
 
