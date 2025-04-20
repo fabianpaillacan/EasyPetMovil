@@ -1,4 +1,5 @@
 import 'package:easypet/features/auth/controllers/auth_controller.dart';
+import 'package:easypet/features/auth/screens/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:easypet/features/auth/screens/login_screen.dart';
 
@@ -59,6 +60,20 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             const SizedBox(height: 16),
             Text(result),
+            Text(
+              'Si no tienes cuenta, puedes registrarte aquí',
+              style: TextStyle(color: Colors.blue),
+            ),
+            TextButton(
+              onPressed: () {
+                // Navegar a la pantalla de registro
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                );
+              },
+              child: const Text('Registrarse'),
+            ),
           ],
         ),
       ),

@@ -1,16 +1,11 @@
-from fastapi import FastAPI,Header, HTTPException, Depends
-from google.cloud import firestore
-from google.oauth2 import service_account
-from rich.logging import RichHandler
-from pprint import pformat
-import logging
-import firebase_admin #este es nuevo
-from firebase_admin import credentials, firestore, auth #este es nuevo
-import os
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from datetime import datetime
+import logging
+from rich.logging import RichHandler
+from backend.firebase import config
+from backend.routes import auth
 
-# Configure logging with Rich
+# Logger bonito
 logging.basicConfig(
     level=logging.DEBUG,
     format="%(message)s",
@@ -19,25 +14,10 @@ logging.basicConfig(
 )
 logger = logging.getLogger("rich")
 
-# Path to your service account key file
-SERVICE_ACCOUNT_KEY_PATH = os.path.abspath('./app-movil-mascotas-39716d81f712.json')
-firebase_admin.initialize_app(credentials.Certificate(SERVICE_ACCOUNT_KEY_PATH))
-logger.info(f"Using service account key at: {SERVICE_ACCOUNT_KEY_PATH}")
-
-# Create credentials explicitly
-credentials = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_KEY_PATH)
-
-# Create Firestore client with explicit credentials
-db = firestore.Client(
-    project='app-movil-mascotas',
-    credentials=credentials,
-    database='easypet'
-)
-
-# Initialize FastAPI app
+# App
 app = FastAPI()
 
-# CORS (para que Flutter pueda acceder desde otro origen)
+# CORS para que Flutter acceda
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -45,14 +25,6 @@ app.add_middleware(
     allow_methods=["*"],
 )
 
-def verify_token(authorization: str = Header(...)):
-    try:
-        scheme, token = authorization.split()
-        decoded = auth.verify_id_token(token)
-        return decoded["uid"]
-    except Exception as e:
-        raise HTTPException(status_code=401, detail="Token inválido")
-
-@app.get("/ping")
-def ping(user_id: str = Depends(verify_token)):
-    return {"message": f"Hola, tu UID es {user_id}"}
+# Registrar rutas
+#app.include_router(auth.router, prefix="/auth", tags=["auth"])
+app.include_router(auth.router)
