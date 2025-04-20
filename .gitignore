@@ -45,3 +45,4 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 /app-movil-mascotas-39716d81f712.json
+/lib/firebase_options.dart
