@@ -58,6 +58,6 @@ app.*.map.json
 *.whl
 *.env
 # ignoire venv folder
-venv    
+.venv    
 # ignore pycache folder
 __pycache__/
