@@ -1,10 +1,9 @@
-import 'package:easypet/features/auth/controllers/auth_controller.dart';
+import 'package:easypet/features/auth/controllers/login_controller.dart';
 import 'package:easypet/features/auth/screens/register_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:easypet/features/auth/screens/login_screen.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();

@@ -1,10 +1,16 @@
-import logging
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
+from backend.routes import auth, register
+import os
 from backend.firebase import config
-from backend.routes import auth
+from dotenv import load_dotenv
+# Cargar las variables de entorno desde el archivo .env
+load_dotenv()
+
+# Obtener la variable desde el archivo .env
+GCP_SERVICE_ACCOUNT_KEY_PATH = os.getenv("GCP_SERVICE_ACCOUNT_KEY_PATH")
+
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = GCP_SERVICE_ACCOUNT_KEY_PATH
 
 # App
 app = FastAPI()
@@ -18,5 +24,5 @@ app.add_middleware(
 )
 
 # Registrar rutas
-# app.include_router(auth.router, prefix="/auth", tags=["auth"])
 app.include_router(auth.router)
+app.include_router(register.router)

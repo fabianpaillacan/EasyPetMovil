@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, Header, HTTPException
+from backend.firebase.config import db
 from firebase_admin import auth
 
 router = APIRouter()
@@ -9,7 +10,7 @@ def verify_token(authorization: str = Header(...)):
         scheme, token = authorization.split()
         decoded = auth.verify_id_token(token)
         return decoded["uid"]
-    except Exception as e:
+    except Exception:
         raise HTTPException(status_code=401, detail="Token inválido")
 
 

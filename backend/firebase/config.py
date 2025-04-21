@@ -13,7 +13,9 @@ load_dotenv()
 # Get config from environment variables
 PROJECT_ID = os.getenv("GCP_PROJECT_ID")
 DATABASE_NAME = os.getenv("GCP_DATABASE_NAME")
-SERVICE_ACCOUNT_KEY_PATH = os.path.abspath(os.getenv("GCP_SERVICE_ACCOUNT_KEY_PATH"))
+SERVICE_ACCOUNT_KEY_PATH = os.path.abspath(
+    os.getenv("GCP_SERVICE_ACCOUNT_KEY_PATH")
+)
 
 # Validate that required environment variables are set
 if not all([PROJECT_ID, DATABASE_NAME, SERVICE_ACCOUNT_KEY_PATH]):

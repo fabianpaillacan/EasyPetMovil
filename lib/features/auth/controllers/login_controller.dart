@@ -20,9 +20,7 @@ class AuthController {
 
       // Hacer ping al backend FastAPI
       final response = await http.get(
-        Uri.parse(
-          'http://10.0.2.2:8000/ping',
-        ), // Asegúrate de usar esto solo en emulador
+        Uri.parse('http://10.0.2.2:8000/ping'), //usar esto solo en emulador
         headers: {'Authorization': 'Bearer $idToken'},
       );
 

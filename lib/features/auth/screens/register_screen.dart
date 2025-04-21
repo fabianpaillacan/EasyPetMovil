@@ -1,8 +1,9 @@
-import 'login_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'package:easypet/features/auth/controllers/register_controller.dart'; //aca se referencia el archivo que esta en controller y pueda acceder a la funcion registerUser
 
 class RegisterScreen extends StatefulWidget {
-  const RegisterScreen({Key? key}) : super(key: key);
+  const RegisterScreen({super.key});
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -19,6 +20,34 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController =
       TextEditingController();
+
+  String? result;
+
+  void registerUser() async {
+    final firstName = firstNameController.text;
+    final lastName = lastNameController.text;
+    final rut = rutController.text;
+    final birthDate = birthDateController.text;
+    final phone = phoneController.text;
+    final email = emailController.text;
+    final gender = genderController.text;
+    final password = passwordController.text;
+
+    final response = await RegisterController.registerUser(  //aca llama a la funcion que esta en register_controller.dart y le envia los datos
+      firstName: firstName,
+      lastName: lastName,
+      rut: rut,
+      birthDate: birthDate,
+      phone: phone,
+      email: email,
+      gender: gender,
+      password: password,
+    );
+
+    setState(() {
+      result = response;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -107,18 +136,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: () {
-                // TODO: Add registration logic here
-                print('Nombres: ${firstNameController.text}');
-                print('Apellidos: ${lastNameController.text}');
-                print('RUT: ${rutController.text}');
-                print('Fecha de Nacimiento: ${birthDateController.text}');
-                print('Teléfono: ${phoneController.text}');
-                print('Correo: ${emailController.text}');
-                print('Género: ${genderController.text}');
-                print('Contraseña: ${passwordController.text}');
-                print('Repetir Contraseña: ${confirmPasswordController.text}');
-              },
+              onPressed: registerUser,
               child: const Text('Registrar'),
             ),
           ],
