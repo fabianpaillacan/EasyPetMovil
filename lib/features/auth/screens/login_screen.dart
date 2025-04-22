@@ -1,5 +1,6 @@
 import 'package:easypet/features/auth/controllers/login_controller.dart';
 import 'package:easypet/features/auth/screens/register_screen.dart';
+import 'package:easypet/features/home/screens/home.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -17,10 +18,22 @@ class _LoginScreenState extends State<LoginScreen> {
   void handleLogin() async {
     final email = emailController.text;
     final password = passwordController.text;
+
     final response = await AuthController.login(email, password);
-    setState(() {
-      result = response;
-    });
+
+    if (!mounted) return;
+
+    final success = response["success"] == true;
+    if (success) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
+      );
+    } else {
+      setState(() {
+        result = response["message"]?.toString() ?? "Error desconocido";
+      });
+    }
   }
 
   @override
@@ -50,16 +63,18 @@ class _LoginScreenState extends State<LoginScreen> {
               obscureText: true,
             ),
             const SizedBox(height: 16),
-            ElevatedButton(onPressed: handleLogin, child: const Text('Login')),
+            ElevatedButton(
+              onPressed: handleLogin,
+              child: const Text('Ingresar'),
+            ),
             const SizedBox(height: 16),
             Text(result),
-            Text(
+            const Text(
               'Si no tienes cuenta, puedes registrarte aquí',
               style: TextStyle(color: Colors.blue),
             ),
             TextButton(
               onPressed: () {
-                // Navegar a la pantalla de registro
                 Navigator.push(
                   context,
                   MaterialPageRoute(

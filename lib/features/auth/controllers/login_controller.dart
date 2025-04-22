@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 
 class AuthController {
-  static Future<String> login(String email, String password) async {
+  static Future<Map<String, dynamic>> login(String email, String password) async {
     try {
       // Autenticación con Firebase
       final userCredential = await FirebaseAuth.instance
@@ -15,7 +15,7 @@ class AuthController {
       // Obtener el token del usuario
       final idToken = await userCredential.user?.getIdToken();
       if (idToken == null) {
-        return "Error al obtener el token";
+        return {"success": false, "message": "Error al obtener el token"};
       }
 
       // Hacer ping al backend FastAPI
@@ -26,12 +26,12 @@ class AuthController {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        return data["message"] ?? "Login correcto pero sin mensaje";
+        return {"success": true, "message": data["message"] ?? "Login correcto pero sin mensaje"};
       } else {
-        return "Error en backend: ${response.statusCode} ${response.body}";
+        return {"success": false, "message": "Error en backend: ${response.statusCode} ${response.body}"};
       }
     } catch (e) {
-      return "❌ Error en login: $e";
+      return {"success": false, "message": "❌ Error en login: $e"};
     }
   }
 }
