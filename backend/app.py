@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from backend.routes import auth, register
+from backend.routes import auth, register, petRegister
 import os
 from backend.firebase import config
 from dotenv import load_dotenv
@@ -26,3 +26,4 @@ app.add_middleware(
 # Registrar rutas
 app.include_router(auth.router)
 app.include_router(register.router)
+app.include_router(petRegister.router)
