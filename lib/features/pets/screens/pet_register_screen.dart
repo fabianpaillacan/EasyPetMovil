@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:easypet/features/pets/controllers/pet_controller.dart';
+import 'package:easypet/features/pets/controllers/registerPets/pet_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:easypet/features/home/screens/home.dart';
 

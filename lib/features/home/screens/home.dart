@@ -4,7 +4,8 @@ import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'package:easypet/features/pets/screens/pet_register_screen.dart';
-import 'package:easypet/features/pets/controllers/pet_controller.dart';
+import 'package:easypet/features/pets/controllers/registerPets/pet_controller.dart';
+import 'package:easypet/features/pets/screens/pet_list_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -43,6 +44,13 @@ class HomeScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             ElevatedButton(
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder:(context) => PetList()),
+                );
+              },
+              child: const Text('Ver mascotas'),
+            ),
+             ElevatedButton(
               onPressed: () => _logout(context),
               child: const Text('Salir'),
             ),
