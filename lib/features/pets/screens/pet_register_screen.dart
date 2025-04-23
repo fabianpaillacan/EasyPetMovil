@@ -1,15 +1,13 @@
-import 'dart:io';
 import 'package:easypet/features/pets/controllers/registerPets/pet_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:easypet/features/home/screens/home.dart';
-
 
 class PetRegisterScreen extends StatefulWidget {
-  const PetRegisterScreen({Key? key}) : super(key: key);
+  const PetRegisterScreen({super.key});
 
   @override
   State<PetRegisterScreen> createState() => _PetRegisterScreenState();
 }
+
 class _PetRegisterScreenState extends State<PetRegisterScreen> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController breedController = TextEditingController();
@@ -19,13 +17,20 @@ class _PetRegisterScreenState extends State<PetRegisterScreen> {
   final TextEditingController colorController = TextEditingController();
   final TextEditingController genderController = TextEditingController();
   String? result;
- 
- void registerPets() async {
+
+  void registerPets() async {
     final name = nameController.text;
-    final breed = breedController.text; // Rename controller to breedController for clarity
-    final weight = weightController.text; // Rename controller to weightController for clarity
-    final age = ageController.text; // Rename controller to ageController for clarity
-    final color = colorController.text; // Rename controller to colorController for clarity
+    final breed =
+        breedController
+            .text; // Rename controller to breedController for clarity
+    final weight =
+        weightController
+            .text; // Rename controller to weightController for clarity
+    final age =
+        ageController.text; // Rename controller to ageController for clarity
+    final color =
+        colorController
+            .text; // Rename controller to colorController for clarity
     final gender = genderController.text;
     //final uid = emailController.text; // Replace with actual logic to fetch the logged-in user's UID
 
@@ -35,7 +40,7 @@ class _PetRegisterScreenState extends State<PetRegisterScreen> {
       weight: weight,
       age: age,
       color: color,
-      gender: gender // Added missing gender parameter
+      gender: gender, // Added missing gender parameter
     );
 
     setState(() {

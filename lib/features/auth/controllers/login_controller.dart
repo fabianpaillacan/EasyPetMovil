@@ -3,7 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 
 class AuthController {
-  static Future<Map<String, dynamic>> login(String email, String password) async {
+  static Future<Map<String, dynamic>> login(
+    String email,
+    String password,
+  ) async {
     try {
       // Autenticación con Firebase
       final userCredential = await FirebaseAuth.instance
@@ -26,9 +29,16 @@ class AuthController {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        return {"success": true, "message": data["message"] ?? "Login correcto pero sin mensaje"};
+        return {
+          "success": true,
+          "message": data["message"] ?? "Login correcto pero sin mensaje",
+        };
       } else {
-        return {"success": false, "message": "Error en backend: ${response.statusCode} ${response.body}"};
+        return {
+          "success": false,
+          "message":
+              "Error en backend: ${response.statusCode} ${response.body}",
+        };
       }
     } catch (e) {
       return {"success": false, "message": "❌ Error en login: $e"};

@@ -1,9 +1,12 @@
+import os
+
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from backend.routes import auth, register, petRegister, petsListForUser
-import os
+
 from backend.firebase import config
-from dotenv import load_dotenv
+from backend.routes import auth, petRegister, petsListForUser, register, consultUser
+
 # Cargar las variables de entorno desde el archivo .env
 load_dotenv()
 
@@ -28,3 +31,5 @@ app.include_router(auth.router)
 app.include_router(register.router)
 app.include_router(petRegister.router)
 app.include_router(petsListForUser.router)
+app.include_router(consultUser.router)
+

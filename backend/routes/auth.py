@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, Header, HTTPException
-from backend.firebase.config import db
 from firebase_admin import auth
+
+from backend.firebase.config import db
 
 router = APIRouter()
 

@@ -1,11 +1,8 @@
-import 'dart:io';
 import 'package:easypet/features/pets/controllers/listPets/petsUser_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:easypet/features/home/screens/home.dart';
-
 
 class PetList extends StatefulWidget {
-  const PetList({Key? key}) : super(key: key);
+  const PetList({super.key});
 
   @override
   State<PetList> createState() => _PetListScreenState();

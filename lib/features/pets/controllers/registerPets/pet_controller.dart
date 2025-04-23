@@ -23,7 +23,10 @@ class PetController with ChangeNotifier {
       final token = await user?.getIdToken();
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'application/json',  'Authorization': 'Bearer $token'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
         body: jsonEncode({
           'name': name,
           'breed': breed,
@@ -31,7 +34,7 @@ class PetController with ChangeNotifier {
           'weight': weight,
           'color': color,
           'gender': gender,
-          'owner_id': user?.uid // Enviamos el UID del usuario
+          'owner_id': user?.uid, // Enviamos el UID del usuario
         }),
       );
 

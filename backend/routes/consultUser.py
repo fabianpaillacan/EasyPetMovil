@@ -18,7 +18,6 @@ if not firebase_admin._apps:
 router = APIRouter()
 security = HTTPBearer()
 
-
 async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
 ):
@@ -31,11 +30,10 @@ async def get_current_user(
             status_code=401, detail="Token inválido o expirado"
         )
 
-
-@router.get("/pets_list_for_user")
-async def pets_list_for_user(user_id: str = Depends(get_current_user)):
+@router.get("/consult_user")
+async def consult_user(user_id: str = Depends(get_current_user)):
     try:
-        # Obtener la lista de mascotas del usuario
+        # Obtener los datos del usuario
         user_ref = db.collection("users").document(user_id)
         user_doc = user_ref.get()
 
@@ -44,21 +42,9 @@ async def pets_list_for_user(user_id: str = Depends(get_current_user)):
                 status_code=404, detail="Usuario no encontrado"
             )
 
-        pets_ids = user_doc.to_dict().get("pets", [])
+        user_data = user_doc.to_dict()
 
-        if not pets_ids:
-            return {"pets": []}
-
-        # Obtener los datos de las mascotas
-        pets_data = []
-        for pet_id in pets_ids:
-            pet_ref = db.collection("pets").document(pet_id)
-            pet_doc = pet_ref.get()
-
-            if pet_doc.exists:
-                pets_data.append(pet_doc.to_dict())
-
-        return {"pets": pets_data}
-
+        return {"user": user_data} #esto hace que se devuelva al frontend como map<>
+        #return {[user_data]} #esto hace que se devuelva al frontend como list<>
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

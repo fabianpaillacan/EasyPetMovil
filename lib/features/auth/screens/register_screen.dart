@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:easypet/features/auth/controllers/register_controller.dart'; //aca se referencia el archivo que esta en controller y pueda acceder a la funcion registerUser
 
 class RegisterScreen extends StatefulWidget {
@@ -33,7 +32,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final gender = genderController.text;
     final password = passwordController.text;
 
-    final response = await RegisterController.registerUser(  //aca llama a la funcion que esta en register_controller.dart y le envia los datos
+    final response = await RegisterController.registerUser(
+      //aca llama a la funcion que esta en register_controller.dart y le envia los datos
       firstName: firstName,
       lastName: lastName,
       rut: rut,

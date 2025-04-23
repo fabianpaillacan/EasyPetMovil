@@ -1,12 +1,14 @@
-from fastapi import APIRouter, HTTPException, Depends
+import firebase_admin
+from fastapi import APIRouter, Depends, HTTPException
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from firebase_admin import auth, firestore
 from pydantic import BaseModel
+
 from backend.firebase.config import db
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-import firebase_admin
 
 router = APIRouter()
 security = HTTPBearer()
+
 
 class PetRegisterRequest(BaseModel):
     name: str
@@ -17,26 +19,39 @@ class PetRegisterRequest(BaseModel):
     age: str
     owner_id: str
 
-async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
+
+async def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+):
     try:
         token = credentials.credentials
         decoded_token = auth.verify_id_token(token)
-        return decoded_token['uid']
+        return decoded_token["uid"]
     except Exception as e:
-        raise HTTPException(status_code=401, detail="Token inválido o expirado")
+        raise HTTPException(
+            status_code=401, detail="Token inválido o expirado"
+        )
+
 
 @router.post("/register_pet")
-async def register_pet(pet: PetRegisterRequest, current_user_uid: str = Depends(get_current_user)):
+async def register_pet(
+    pet: PetRegisterRequest, current_user_uid: str = Depends(get_current_user)
+):
     try:
         # Verificar que el owner_id coincida con el usuario autenticado
         if pet.owner_id != current_user_uid:
-            raise HTTPException(status_code=403, detail="No autorizado para registrar mascotas para este usuario")
-        
+            raise HTTPException(
+                status_code=403,
+                detail="No autorizado para registrar mascotas para este usuario",
+            )
+
         # Verificar que el usuario existe
         try:
             auth.get_user(pet.owner_id)
         except:
-            raise HTTPException(status_code=404, detail="Usuario no encontrado")
+            raise HTTPException(
+                status_code=404, detail="Usuario no encontrado"
+            )
 
         # Registrar mascota en Firestore
         pet_ref = db.collection("pets").document()
@@ -48,20 +63,23 @@ async def register_pet(pet: PetRegisterRequest, current_user_uid: str = Depends(
             "color": pet.color,
             "gender": pet.gender,
             "owner_id": pet.owner_id,
-            "created_at": firestore.SERVER_TIMESTAMP
+            "created_at": firestore.SERVER_TIMESTAMP,
         }
-        
+
         pet_ref.set(pet_data)
-        
+
         # Actualizar la lista de mascotas del usuario
         user_ref = db.collection("users").document(pet.owner_id)
-        user_ref.update({
-            "pets": firestore.ArrayUnion([pet_ref.id])
-        })
+        user_ref.update({"pets": firestore.ArrayUnion([pet_ref.id])})
 
-        return {"message": "Mascota registrada exitosamente", "pet_id": pet_ref.id}
-        
+        return {
+            "message": "Mascota registrada exitosamente",
+            "pet_id": pet_ref.id,
+        }
+
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error al registrar mascota: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Error al registrar mascota: {str(e)}"
+        )
