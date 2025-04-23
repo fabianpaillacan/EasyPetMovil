@@ -33,4 +33,35 @@ class ConfigurationController with ChangeNotifier {
       return {};
     }
   }
+
+  static Future<void> updateConfigUser(Map<String, dynamic> data) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    try {
+      final token = await user.getIdToken();
+      final url = Uri.parse('http://10.0.2.2:8000/update_user');
+
+      // Remove password from data before sending
+      final sanitizedData = Map<String, dynamic>.from(data);
+      sanitizedData.remove('password');
+
+      final response = await http.put(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(sanitizedData),
+      );
+
+      if (response.statusCode != 200) {
+        debugPrint('Error updating user: ${response.statusCode}');
+      }
+    } catch (e) {
+      debugPrint('Exception updating user: $e');
+    }
+  }
 }
+
+

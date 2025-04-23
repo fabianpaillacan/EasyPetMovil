@@ -1,7 +1,7 @@
 import os
 
 import firebase_admin
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Body
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from firebase_admin import auth, firestore
 from pydantic import BaseModel
@@ -46,5 +46,26 @@ async def consult_user(user_id: str = Depends(get_current_user)):
 
         return {"user": user_data} #esto hace que se devuelva al frontend como map<>
         #return {[user_data]} #esto hace que se devuelva al frontend como list<>
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+class UserUpdateRequest(BaseModel):
+    first_name: str
+    last_name: str
+    birth_date: str
+    email: str
+    phone: str
+    gender: str
+    #password: str  # No se recomienda guardar contraseñas así, pero asumimos que estás usando Firebase para auth
+
+@router.put("/update_user")
+async def update_user(
+    user_id: str = Depends(get_current_user),
+    data: UserUpdateRequest = Body(...)
+):
+    try:
+        user_ref = db.collection("users").document(user_id)
+        user_ref.update(data.model_dump())  # si usas Pydantic v2
+        return {"message": "Usuario actualizado correctamente"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
