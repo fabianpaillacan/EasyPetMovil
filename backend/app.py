@@ -1,19 +1,10 @@
-import os
-
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from backend.firebase import config
-from backend.routes import auth, petRegister, petsListForUser, register, consultUser
-
-# Cargar las variables de entorno desde el archivo .env
-load_dotenv()
-
-# Obtener la variable desde el archivo .env
-GCP_SERVICE_ACCOUNT_KEY_PATH = os.getenv("GCP_SERVICE_ACCOUNT_KEY_PATH")
-
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = GCP_SERVICE_ACCOUNT_KEY_PATH
+# from backend.firebase import config
+from backend.routes import (auth, consultUser, petRegister, petsListForUser,
+                            register)
 
 # App
 app = FastAPI()
@@ -32,4 +23,3 @@ app.include_router(register.router)
 app.include_router(petRegister.router)
 app.include_router(petsListForUser.router)
 app.include_router(consultUser.router)
-

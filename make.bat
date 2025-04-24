@@ -38,7 +38,7 @@ IF "%1"=="clean" (
 IF "%1"=="format" (
     call %VENV%\Scripts\activate.bat
     echo Formatting code...
-    python -m black backend/ --line-length 79
+    python -m black backend/ --line-length 76
     python -m isort backend/
     python -m flake8 backend/ --exit-zero
     dart format .

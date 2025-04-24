@@ -1,19 +1,8 @@
-import os
-
-import firebase_admin
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from firebase_admin import auth, firestore
-from pydantic import BaseModel
+from firebase_admin import auth
 
 from backend.firebase.config import db
-
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = (
-    "C:/Users/Fabian/Downloads/app-movil-mascotas-39716d81f712.json"
-)
-# Inicializa Firebase si no se ha hecho aún
-if not firebase_admin._apps:
-    firebase_admin.initialize_app()
 
 router = APIRouter()
 security = HTTPBearer()

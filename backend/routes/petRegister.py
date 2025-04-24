@@ -1,4 +1,3 @@
-import firebase_admin
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from firebase_admin import auth, firestore
@@ -35,7 +34,8 @@ async def get_current_user(
 
 @router.post("/register_pet")
 async def register_pet(
-    pet: PetRegisterRequest, current_user_uid: str = Depends(get_current_user)
+    pet: PetRegisterRequest,
+    current_user_uid: str = Depends(get_current_user),
 ):
     try:
         # Verificar que el owner_id coincida con el usuario autenticado

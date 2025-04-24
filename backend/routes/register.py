@@ -1,22 +1,10 @@
-import os
-
-import firebase_admin
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException
 from firebase_admin import auth, firestore
 from pydantic import BaseModel
 
 from backend.firebase.config import db
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = (
-    "C:/Users/Fabian/Downloads/app-movil-mascotas-39716d81f712.json"
-)
-# Inicializa Firebase si no se ha hecho aún
-if not firebase_admin._apps:
-    firebase_admin.initialize_app()
-
 router = APIRouter()
-
-# db = firestore.client() no es necesario, ya que se inicializa en config.py, solo hay que importar la variable db
 
 
 class RegisterRequest(BaseModel):
@@ -43,7 +31,8 @@ async def register_user(req: RegisterRequest):
 
             print(f"Auth error: {auth_error}")
             raise HTTPException(
-                status_code=400, detail=f"Error en autenticación: {auth_error}"
+                status_code=400,
+                detail=f"Error en autenticación: {auth_error}",
             )
 
         # Try to save data to Firestore
@@ -68,7 +57,8 @@ async def register_user(req: RegisterRequest):
             except:
                 pass
             raise HTTPException(
-                status_code=400, detail=f"Error en base de datos: {db_error}"
+                status_code=400,
+                detail=f"Error en base de datos: {db_error}",
             )
 
         return {"message": "✅ Usuario registrado correctamente"}
@@ -78,4 +68,6 @@ async def register_user(req: RegisterRequest):
     except Exception as e:
 
         print(f"Unexpected error: {e}")
-        raise HTTPException(status_code=500, detail=f"Error inesperado: {e}")
+        raise HTTPException(
+            status_code=500, detail=f"Error inesperado: {e}"
+        )

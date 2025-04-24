@@ -3,7 +3,7 @@ import 'package:easypet/features/auth/screens/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:easypet/features/pets/screens/pet_register_screen.dart';
 import 'package:easypet/features/pets/screens/pet_list_screen.dart';
-import 'package:easypet/features/configurationUser/screens/configurationScreen.dart';
+import 'package:easypet/features/updateUserInfo/screens/configurationScreen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -57,7 +57,16 @@ class HomeScreen extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => ConfigUser()),
                 );
               },
-              child: const Text('Usuario'),
+              child: const Text('Cambiar información de usuario'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ConfigUser()),
+                );
+              },
+              child: const Text('Cambiar correo / contraseña'),
             ),
             ElevatedButton(
               onPressed: () => _logout(context),
