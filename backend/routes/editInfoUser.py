@@ -60,7 +60,11 @@ async def update_user(
 ):
     try:
         user_ref = db.collection("users").document(user_id)
-        user_ref.update(data.model_dump())  # si usas Pydantic v2
+        user_ref.update(data.model_dump())
+        if data.email:
+            auth.update_user(
+                user_id, email=data.email
+            )  # Actualizar el email en Firebase Auth
         return {"message": "Usuario actualizado correctamente"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

@@ -1,5 +1,6 @@
 import 'package:easypet/features/updateUserInfo/controllers/configuration_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:easypet/features/home/screens/home.dart';
 
 class ConfigUser extends StatefulWidget {
   const ConfigUser({super.key});
@@ -65,6 +66,12 @@ class _ConfigUserState extends State<ConfigUser> {
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(const SnackBar(content: Text("✅ Datos actualizados")));
+     Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
+        (route) => false,
+      );
+
   }
 
   @override
