@@ -89,7 +89,7 @@ class _ConfigUserState extends State<ConfigUser> {
                     _buildTextField(
                       'Nombre',
                       _firstNameController,
-                      'Ej: Diego',
+                      'Ej: Humberto',
                     ),
                     const SizedBox(height: 16),
                     _buildTextField(
@@ -107,7 +107,7 @@ class _ConfigUserState extends State<ConfigUser> {
                     _buildTextField(
                       'Correo Electrónico',
                       _emailController,
-                      'Ej: diego@gmail.com',
+                      'Ej: example@gmail.com',
                     ),
                     const SizedBox(height: 16),
                     _buildTextField(
