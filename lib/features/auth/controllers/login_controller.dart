@@ -41,7 +41,7 @@ class AuthController {
         };
       }
     } catch (e) {
-      return {"success": false, "message": "❌ Error en login: $e"};
+      return {"success": false, "message": "Error en login: $e"};
     }
   }
 }

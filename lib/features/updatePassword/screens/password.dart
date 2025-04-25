@@ -21,12 +21,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     final confirmPassword = confirmPasswordController.text;
 
     if (newPassword.isEmpty || confirmPassword.isEmpty) {
-      setState(() => result = '❌ Todos los campos son obligatorios');
+      setState(() => result = 'Todos los campos son obligatorios');
       return;
     }
 
     if (newPassword != confirmPassword) {
-      setState(() => result = '❌ Las contraseñas no coinciden');
+      setState(() => result = 'Las contraseñas no coinciden');
       return;
     }
 
@@ -37,7 +37,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       isLoading = false;
     });
     //volver al login
-    if (response == '✅ Contraseña actualizada correctamente') {
+    if (response == 'Contraseña actualizada correctamente') {
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => const LoginScreen()),

@@ -61,7 +61,7 @@ async def register_user(req: RegisterRequest):
                 detail=f"Error en base de datos: {db_error}",
             )
 
-        return {"message": "✅ Usuario registrado correctamente"}
+        return {"message": "Usuario registrado correctamente"}
 
     except HTTPException:
         raise

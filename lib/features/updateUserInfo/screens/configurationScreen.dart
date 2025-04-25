@@ -46,7 +46,7 @@ class _ConfigUserState extends State<ConfigUser> {
       _birthDateController.text = userInfo['birth_date'] ?? '';
       _emailController.text = userInfo['email'] ?? '';
       _phoneController.text = userInfo['phone'] ?? '';
-      _genderController.text = userInfo['gender'] ?? '';
+      _genderController.text = userInfo['gender'] ?? '';  //ojala poder hacer dropdown
       _isLoading = false;
     });
   }
@@ -65,7 +65,7 @@ class _ConfigUserState extends State<ConfigUser> {
     if (!mounted) return;
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(const SnackBar(content: Text("✅ Datos actualizados")));
+    ).showSnackBar(const SnackBar(content: Text("Datos actualizados")));
      Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => const HomeScreen()),

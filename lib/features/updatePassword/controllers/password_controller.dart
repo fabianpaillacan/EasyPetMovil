@@ -6,7 +6,7 @@ class ChangePasswordController {
   static Future<String> updatePassword(String newPassword) async {
     try {
       final user = FirebaseAuth.instance.currentUser;
-      if (user == null) return '❌ Usuario no autenticado';
+      if (user == null) return 'Usuario no autenticado';
 
       final token = await user.getIdToken();
       final response = await http.put(
@@ -19,12 +19,12 @@ class ChangePasswordController {
       );
 
       if (response.statusCode == 200) {
-        return '✅ Contraseña actualizada correctamente';
+        return 'Contraseña actualizada correctamente';
       } else {
-        return '❌ Error: ${response.body}';
+        return 'Error: ${response.body}';
       }
     } catch (e) {
-      return '❌ Error inesperado: $e';
+      return 'Error inesperado: $e';
     }
   }
 }

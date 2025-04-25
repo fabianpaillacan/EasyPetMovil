@@ -11,7 +11,6 @@ class PetRegisterScreen extends StatefulWidget {
 class _PetRegisterScreenState extends State<PetRegisterScreen> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController breedController = TextEditingController();
-  //final TextEditingController speciesController = TextEditingController(); // Removed unused speciesController
   final TextEditingController weightController = TextEditingController();
   final TextEditingController ageController = TextEditingController();
   final TextEditingController colorController = TextEditingController();
@@ -22,25 +21,24 @@ class _PetRegisterScreenState extends State<PetRegisterScreen> {
     final name = nameController.text;
     final breed =
         breedController
-            .text; // Rename controller to breedController for clarity
+            .text; 
     final weight =
         weightController
-            .text; // Rename controller to weightController for clarity
+            .text; 
     final age =
-        ageController.text; // Rename controller to ageController for clarity
+        ageController.text; 
     final color =
         colorController
-            .text; // Rename controller to colorController for clarity
+            .text; 
     final gender = genderController.text;
-    //final uid = emailController.text; // Replace with actual logic to fetch the logged-in user's UID
-
+ 
     final response = await PetController.registerPets(
       name: name,
       breed: breed,
       weight: weight,
       age: age,
       color: color,
-      gender: gender, // Added missing gender parameter
+      gender: gender, 
     );
 
     setState(() {
