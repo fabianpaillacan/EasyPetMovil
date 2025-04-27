@@ -53,93 +53,107 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Registro')),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            TextField(
-              controller: firstNameController,
-              decoration: const InputDecoration(
-                labelText: 'Nombres',
-                border: OutlineInputBorder(),
+      body: Container(
+        padding: const EdgeInsets.all(20.0),
+        child: Form(
+          child: ListView(
+            children: [
+              TextFormField(
+                controller: firstNameController,
+                keyboardType: TextInputType.text,
+                decoration: const InputDecoration(
+                  labelText: 'Nombres',
+                  hintText: 'User Name',
+                  icon: Icon(Icons.person),
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: lastNameController,
-              decoration: const InputDecoration(
-                labelText: 'Apellidos',
-                border: OutlineInputBorder(),
+              const SizedBox(height: 10),
+              TextFormField(
+                controller: lastNameController,
+                keyboardType: TextInputType.text,
+                decoration: const InputDecoration(
+                  labelText: 'Apellidos',
+                  hintText: 'Last Name',
+                  icon: Icon(Icons.person_outline),
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: rutController,
-              decoration: const InputDecoration(
-                labelText: 'RUT',
-                border: OutlineInputBorder(),
+              const SizedBox(height: 10),
+              TextFormField(
+                controller: rutController,
+                keyboardType: TextInputType.text,
+                decoration: const InputDecoration(
+                  labelText: 'RUT',
+                  hintText: 'RUT',
+                  icon: Icon(Icons.badge),
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: birthDateController,
-              decoration: const InputDecoration(
-                labelText: 'Fecha de Nacimiento',
-                border: OutlineInputBorder(),
+              const SizedBox(height: 10),
+              TextFormField(
+                controller: birthDateController,
+                keyboardType: TextInputType.datetime,
+                decoration: const InputDecoration(
+                  labelText: 'Fecha de Nacimiento',
+                  hintText: 'Birth Date',
+                  icon: Icon(Icons.calendar_today),
+                ),
               ),
-              keyboardType: TextInputType.datetime,
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: phoneController,
-              decoration: const InputDecoration(
-                labelText: 'Teléfono',
-                border: OutlineInputBorder(),
+              const SizedBox(height: 10),
+              TextFormField(
+                controller: phoneController,
+                keyboardType: TextInputType.phone,
+                decoration: const InputDecoration(
+                  labelText: 'Teléfono',
+                  hintText: 'Phone Number',
+                  icon: Icon(Icons.phone),
+                ),
               ),
-              keyboardType: TextInputType.phone,
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: emailController,
-              decoration: const InputDecoration(
-                labelText: 'Correo',
-                border: OutlineInputBorder(),
+              const SizedBox(height: 10),
+              TextFormField(
+                controller: emailController,
+                keyboardType: TextInputType.emailAddress,
+                decoration: const InputDecoration(
+                  labelText: 'Correo',
+                  hintText: 'Email',
+                  icon: Icon(Icons.email),
+                ),
               ),
-              keyboardType: TextInputType.emailAddress,
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: genderController,
-              decoration: const InputDecoration(
-                labelText: 'Género',
-                border: OutlineInputBorder(),
+              const SizedBox(height: 10),
+              TextFormField(
+                controller: genderController,
+                keyboardType: TextInputType.text,
+                decoration: const InputDecoration(
+                  labelText: 'Género',
+                  hintText: 'Gender',
+                  icon: Icon(Icons.transgender),
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: passwordController,
-              decoration: const InputDecoration(
-                labelText: 'Contraseña',
-                border: OutlineInputBorder(),
+              const SizedBox(height: 10),
+              TextFormField(
+                controller: passwordController,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: 'Contraseña',
+                  hintText: 'Password',
+                  icon: Icon(Icons.lock),
+                ),
               ),
-              obscureText: true,
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: confirmPasswordController,
-              decoration: const InputDecoration(
-                labelText: 'Repetir Contraseña',
-                border: OutlineInputBorder(),
+              const SizedBox(height: 10),
+              TextFormField(
+                controller: confirmPasswordController,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: 'Repetir Contraseña',
+                  hintText: 'Confirm Password',
+                  icon: Icon(Icons.lock_outline),
+                ),
               ),
-              obscureText: true,
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: registerUser,
-              child: const Text('Registrar'),
-            ),
-          ],
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: registerUser,
+                child: const Text('Registrar'),
+              ),
+            ],
+          ),
         ),
       ),
     );
