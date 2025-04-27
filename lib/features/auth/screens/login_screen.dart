@@ -13,9 +13,12 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String result = "";
 
   void handleLogin() async {
+    if (!_formKey.currentState!.validate()) return;
+
     final email = emailController.text;
     final password = passwordController.text;
 
@@ -36,55 +39,168 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  void navigateToRegister() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const RegisterScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    MediaQueryData media = MediaQuery.of(context);
+    final Size screenSize = media.size;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            TextField(
-              controller: emailController,
-              decoration: const InputDecoration(
-                labelText: 'Email',
-                border: OutlineInputBorder(),
+      appBar: AppBar(
+        title: const Text('EASYPET'),
+      ),
+      body: Container(
+        padding: const EdgeInsets.all(20.0),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            children: <Widget>[
+              Container(
+                padding: const EdgeInsets.all(20.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const <Widget>[
+                    FlutterLogo(size: 100.0), //ACA TENEMOS QUE PONER EL LOGO DE EASYPET
+                  ],
+                ),
               ),
-              keyboardType: TextInputType.emailAddress,
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: passwordController,
-              decoration: const InputDecoration(
-                labelText: 'Password',
-                border: OutlineInputBorder(),
-              ),
-              obscureText: true,
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: handleLogin,
-              child: const Text('Ingresar'),
-            ),
-            const SizedBox(height: 16),
-            Text(result),
-            const Text(
-              'Si no tienes cuenta, puedes registrarte aquí',
-              style: TextStyle(color: Colors.blue),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const RegisterScreen(),
+              Container(
+                padding: const EdgeInsets.only(top: 10.0),
+                child: TextFormField(
+                  controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: const InputDecoration(
+                    hintText: 'you@example.com',
+                    labelText: 'E-mail Address',
+                    icon: Icon(Icons.email),
                   ),
-                );
-              },
-              child: const Text('Registrarse'),
-            ),
-          ],
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Por favor ingresa tu correo electrónico';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.only(top: 10.0),
+                child: TextFormField(
+                  controller: passwordController,
+                  obscureText: true,
+                  decoration: const InputDecoration(
+                    hintText: 'Password',
+                    labelText: 'Enter your password',
+                    icon: Icon(Icons.lock),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Por favor ingresa tu contraseña';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              Container(
+                width: screenSize.width,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Container(
+                      height: 50.0,
+                      margin: const EdgeInsets.only(left: 10.0, top: 30.0),
+                      child: ElevatedButton(
+                        onPressed: handleLogin,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.deepPurple,
+                        ),
+                        child: const Text(
+                          'Login',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      height: 50.0,
+                      margin: const EdgeInsets.only(left: 20.0, top: 30.0),
+                      child: ElevatedButton(
+                        onPressed: navigateToRegister,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.deepPurple,
+                        ),
+                        child: const Text(
+                          'Registration',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                width: screenSize.width,
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      margin: const EdgeInsets.only(left: 10.0, top: 20.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Container(
+                            height: 50.0,
+                            width: 210.0,
+                            child: ElevatedButton.icon(
+                              onPressed: () {
+                                // Implementa el inicio de sesión con Google aquí
+                              },
+                              icon: const Icon(Icons.g_mobiledata, color: Colors.white),
+                              label: const Text(
+                                'Login with Google+',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    /*Container(
+                      margin: const EdgeInsets.only(left: 10.0, top: 20.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Container(
+                            height: 50.0,
+                            width: 210.0,
+                            child: ElevatedButton.icon(
+                              onPressed: () {
+                                // Implementa el inicio de sesión con Facebook aquí
+                              },
+                              icon: const Icon(Icons.facebook, color: Colors.white),
+                              label: const Text(
+                                'Login with Facebook',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.indigo,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),*/
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

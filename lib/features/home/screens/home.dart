@@ -60,7 +60,7 @@ class HomeScreen extends StatelessWidget {
               },
               child: const Text('Cambiar información de usuario'),
             ),
-            ElevatedButton(
+                ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,

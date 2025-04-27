@@ -1,4 +1,6 @@
 import 'package:easypet/features/pets/controllers/listPets/petsUser_controller.dart';
+import 'package:easypet/features/pets/controllers/pet_profile/controllers/pet_profile_controller.dart';
+import 'package:easypet/features/pets/screens/pet_profile_screen.dart';
 import 'package:flutter/material.dart';
 
 class PetList extends StatefulWidget {
@@ -45,6 +47,15 @@ class _PetListScreenState extends State<PetList> {
               ),
             ),
             tileColor: index % 2 == 0 ? Colors.grey[200] : Colors.white,
+           /* trailing: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => EditPetProfile()),
+                );
+              },
+              child: const Text('Editar'),
+            )*/
             onTap: () {
               showDialog(
                 context: context,
