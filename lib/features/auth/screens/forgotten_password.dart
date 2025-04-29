@@ -1,7 +1,6 @@
 //aqui tengo que venir despues de apretar el boton de me olvide la contrasena, ingresar mi correo y el auth de firebase se encarga de verificar. 
 //lo podria mandar directamente a la pantalla de crear nueva contrasena y redirigir a la pantalla de login.
 import 'package:easypet/features/auth/controllers/forgotten_password_controller.dart';
-import 'package:easypet/features/home/screens/home.dart';
 import 'package:flutter/material.dart';
 
 class ForgottenPasswordScreen extends StatefulWidget {
@@ -25,18 +24,14 @@ class _ForgottenPasswordScreenState extends State<ForgottenPasswordScreen> {
 
     if (!mounted) return;
 
-    final success = response["success"] == true;
-    if (success) {
+    if (response.success) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Correo enviado. Revisa tu bandeja de entrada.")),
+        SnackBar(content: Text(response.message)),
       );
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
-      );
+      Navigator.pop(context); // Regresa a la pantalla anterior (por ejemplo, Login)
     } else {
       setState(() {
-        resultMessage = response["message"]?.toString() ?? "Error desconocido";
+        resultMessage = response.message;
       });
     }
   }
@@ -55,7 +50,7 @@ class _ForgottenPasswordScreenState extends State<ForgottenPasswordScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                "Ingresa tu correo electrónico para recuperar tu contraseña.",
+                "Ingresa tu correo electrónico para cambiar tu contraseña.",
                 style: TextStyle(fontSize: 16),
               ),
               const SizedBox(height: 16),

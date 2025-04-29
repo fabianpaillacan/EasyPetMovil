@@ -1,17 +1,53 @@
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:easypet/features/auth/screens/forgotten_password.dart';
 
-class ResetPasswordController {
-  static Future<Map<String, dynamic>>resetPasswordStatic(String email) async {
-    try {
-      // Llama a la función para enviar el correo de restablecimiento
-      await sendPasswordResetEmail(email: email);
+class PasswordResetResponse {
+  final bool success;
+  final String message;
 
-      return {"success": true, "message": "Correo de restablecimiento enviado"};
+  PasswordResetResponse({required this.success, required this.message});
+}
+
+class ResetPasswordController {
+  static final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  static Future<PasswordResetResponse> resetPasswordStatic(String email) async {
+    try {
+      // Verificar si el email existe
+      final signInMethods = await _auth.fetchSignInMethodsForEmail(email);
+      if (signInMethods.isEmpty) {
+        return PasswordResetResponse(
+          success: false,
+          message: "No hay cuenta asociada a este correo",
+        );
+      }
+
+      // Enviar email de recuperación
+      await _auth.sendPasswordResetEmail(email: email);
+
+      return PasswordResetResponse(
+        success: true,
+        message: "Hemos enviado un correo con instrucciones para restablecer tu contraseña",
+      );
+    } on FirebaseAuthException catch (e) {
+      String errorMessage;
+      switch (e.code) {
+        case 'invalid-email':
+          errorMessage = "El correo ingresado no es válido";
+          break;
+        case 'user-not-found':
+          errorMessage = "No hay cuenta asociada a este correo";
+          break;
+        default:
+          errorMessage = "Ocurrió un error inesperado: ${e.message}";
+      }
+      return PasswordResetResponse(success: false, message: errorMessage);
     } catch (e) {
-      return {"success": false, "message": "Error al restablecer la contraseña: $e"};
+      return PasswordResetResponse(
+        success: false,
+        message: "Error al procesar la solicitud",
+      );
     }
   }
 
@@ -22,13 +58,6 @@ class ResetPasswordController {
       print(e.toString());
       // Maneja el error según sea necesario
     }
-  }
-
-  static Future<void> sendPasswordResetEmail({required String email}) async {
-    final FirebaseAuth auth = FirebaseAuth.instance;
-
-    // Envía el correo de restablecimiento de contraseña
-    await auth.sendPasswordResetEmail(email: email);
   }
 }
 
