@@ -1,5 +1,6 @@
 import 'package:easypet/features/auth/controllers/login_controller.dart';
 import 'package:easypet/features/auth/screens/register_screen.dart';
+import 'package:easypet/features/auth/screens/forgotten_password.dart';
 import 'package:easypet/features/home/screens/home.dart';
 import 'package:flutter/material.dart';
 
@@ -33,7 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
         MaterialPageRoute(builder: (context) => const HomeScreen()),
       );
     } else {
-      setState(() {
+      setState(() { 
         result = response["message"]?.toString() ?? "Error desconocido";
       });
     }
@@ -43,6 +44,13 @@ class _LoginScreenState extends State<LoginScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const RegisterScreen()),
+    );
+  }
+
+  void navigateToForgotPassword() { //aqui voy a crear la navegacion a la pantalla de olvide mi contraseña
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context)=> const ForgottenPasswordScreen())
     );
   }
 
@@ -139,6 +147,20 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
+                      Container(
+                      height: 50.0,
+                      margin: const EdgeInsets.only(left: 20.0, top: 30.0),
+                      child: ElevatedButton(
+                        onPressed: navigateToForgotPassword,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.deepPurple,
+                        ),
+                        child: const Text(
+                          'Forgot Password',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -171,31 +193,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         ],
                       ),
                     ),
-                    /*Container(
-                      margin: const EdgeInsets.only(left: 10.0, top: 20.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Container(
-                            height: 50.0,
-                            width: 210.0,
-                            child: ElevatedButton.icon(
-                              onPressed: () {
-                                // Implementa el inicio de sesión con Facebook aquí
-                              },
-                              icon: const Icon(Icons.facebook, color: Colors.white),
-                              label: const Text(
-                                'Login with Facebook',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.indigo,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),*/
                   ],
                 ),
               ),
