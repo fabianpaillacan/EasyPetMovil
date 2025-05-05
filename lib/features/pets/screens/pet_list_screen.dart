@@ -1,10 +1,12 @@
 import 'package:easypet/features/pets/controllers/listPets/petsUser_controller.dart';
-import 'package:easypet/features/pets/controllers/pet_profile/controllers/pet_profile_controller.dart';
+import 'package:easypet/features/pets/controllers/pet_profile/pet_profile_controller.dart';
 import 'package:easypet/features/pets/screens/pet_profile_screen.dart';
 import 'package:flutter/material.dart';
 
 class PetList extends StatefulWidget {
-  const PetList({super.key});
+   final String token;
+
+  const PetList({super.key, required this.token});
 
   @override
   State<PetList> createState() => _PetListScreenState();
@@ -36,7 +38,7 @@ class _PetListScreenState extends State<PetList> {
           final pet = pets[index];
           return ListTile(
             title: Text(
-              pet['name'],
+              '${pet['name']} (${pet['id']})',
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             leading: CircleAvatar(
@@ -47,42 +49,27 @@ class _PetListScreenState extends State<PetList> {
               ),
             ),
             tileColor: index % 2 == 0 ? Colors.grey[200] : Colors.white,
-           /* trailing: ElevatedButton(
-              onPressed: () {
+        onTap: () {
+              final petId = pet['id']; // <-- Este valor debe existir
+              if (petId != null && petId is String) {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => EditPetProfile()),
+                  MaterialPageRoute(
+                    builder: (context) => PetProfileScreen(petId: petId),
+                  ),
                 );
-              },
-              child: const Text('Editar'),
-            )*/
-            onTap: () {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    title: Text(pet['name']),
-                    content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text('Edad: ${pet['age']} años'),
-                        Text('Peso: ${pet['weight']} kg'),
-                        Text('Color: ${pet['color']}'),
-                      ],
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        child: const Text('Cerrar'),
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('ID de mascota no válido')),
+                );
+              }
+            }
+
           );
         },
       ),
     );
   }
 }
+
+//yo aca no deberia mostrar la informacion de la mascota. apreto el boton y me lleva a la informacion de la mascota.

@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:convert';
 
-class PetController with ChangeNotifier {
+class PetControllerRegister with ChangeNotifier {
   static Future<String> registerPets({
     required String name,
     required String breed,

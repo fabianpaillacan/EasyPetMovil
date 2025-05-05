@@ -6,8 +6,29 @@ import 'package:easypet/features/pets/screens/pet_list_screen.dart';
 import 'package:easypet/features/updateUserInfo/screens/configurationScreen.dart';
 import 'package:easypet/features/updatePassword/screens/password.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  String? idToken;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadToken();
+  }
+
+  Future<void> _loadToken() async {
+    final user = FirebaseAuth.instance.currentUser;
+    final token = await user?.getIdToken();
+    setState(() {
+      idToken = token;
+    });
+  }
 
   Future<void> _logout(BuildContext context) async {
     await FirebaseAuth.instance.signOut();
@@ -36,35 +57,37 @@ class HomeScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => PetRegisterScreen()),
+                  MaterialPageRoute(builder: (context) => const PetRegisterScreen()),
                 );
               },
               child: const Text('Registrar mascota'),
             ),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => PetList()),
-                );
-              },
+              onPressed: idToken == null
+                  ? null
+                  : () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => PetList(token: idToken!)),
+                      );
+                    },
               child: const Text('Ver mascotas'),
             ),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ConfigUser()),
+                  MaterialPageRoute(builder: (context) => const ConfigUser()),
                 );
               },
               child: const Text('Cambiar información de usuario'),
             ),
-                ElevatedButton(
+            ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ChangePasswordScreen()),
+                  MaterialPageRoute(builder: (context) => const ChangePasswordScreen()),
                 );
               },
               child: const Text('Cambiar Contraseña'),
@@ -79,3 +102,4 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
+

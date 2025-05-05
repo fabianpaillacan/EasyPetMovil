@@ -24,7 +24,6 @@ async def get_current_user(
 @router.get("/pets_list_for_user")
 async def pets_list_for_user(user_id: str = Depends(get_current_user)):
     try:
-        # Obtener la lista de mascotas del usuario
         user_ref = db.collection("users").document(user_id)
         user_doc = user_ref.get()
 
@@ -38,14 +37,15 @@ async def pets_list_for_user(user_id: str = Depends(get_current_user)):
         if not pets_ids:
             return {"pets": []}
 
-        # Obtener los datos de las mascotas
         pets_data = []
         for pet_id in pets_ids:
             pet_ref = db.collection("pets").document(pet_id)
             pet_doc = pet_ref.get()
 
             if pet_doc.exists:
-                pets_data.append(pet_doc.to_dict())
+                pet_data = pet_doc.to_dict()
+                pet_data['id'] = pet_doc.id  # ✅ Se incluye el ID
+                pets_data.append(pet_data)
 
         return {"pets": pets_data}
 

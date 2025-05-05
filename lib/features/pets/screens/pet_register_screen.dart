@@ -32,7 +32,7 @@ class _PetRegisterScreenState extends State<PetRegisterScreen> {
             .text; 
     final gender = genderController.text;
  
-    final response = await PetController.registerPets(
+    final response = await PetControllerRegister.registerPets(
       name: name,
       breed: breed,
       weight: weight,

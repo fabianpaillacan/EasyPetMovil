@@ -44,7 +44,7 @@ async def consult_user(user_id: str = Depends(get_current_user)):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-class UserUpdateRequest(BaseModel):
+class UserUpdateRequest(BaseModel): #el basemodel es solo para validar el body que se le pasa al endpoint para actualizar
     first_name: str
     last_name: str
     birth_date: str

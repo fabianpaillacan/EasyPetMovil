@@ -20,7 +20,7 @@ class AuthController {
       if (idToken == null) {
         return {"success": false, "message": "Error al obtener el token"};
       }
-
+      
       // Hacer ping al backend FastAPI
       final response = await http.get(
         Uri.parse('http://10.0.2.2:8000/ping'), //usar esto solo en emulador

@@ -53,9 +53,13 @@ async def register_pet(
                 status_code=404, detail="Usuario no encontrado"
             )
 
-        # Registrar mascota en Firestore
+        # Crear un UID único para la mascota
         pet_ref = db.collection("pets").document()
+        pet_uid = pet_ref.id
+
+        # Registrar mascota en Firestore
         pet_data = {
+            "uid": pet_uid,
             "name": pet.name,
             "breed": pet.breed,
             "age": pet.age,
@@ -70,11 +74,11 @@ async def register_pet(
 
         # Actualizar la lista de mascotas del usuario
         user_ref = db.collection("users").document(pet.owner_id)
-        user_ref.update({"pets": firestore.ArrayUnion([pet_ref.id])})
+        user_ref.update({"pets": firestore.ArrayUnion([pet_uid])})
 
         return {
             "message": "Mascota registrada exitosamente",
-            "pet_id": pet_ref.id,
+            "pet_id": pet_uid,
         }
 
     except HTTPException:
