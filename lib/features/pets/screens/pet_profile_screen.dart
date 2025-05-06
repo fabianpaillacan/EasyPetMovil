@@ -38,14 +38,56 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
               ? const Center(child: Text('No se pudo cargar la mascota'))
               : Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: ListView(
+                  child: Column(
                     children: [
-                      Text('Nombre: ${petData!['name']}', style: TextStyle(fontSize: 18)),
-                      Text('Raza: ${petData!['breed']}', style: TextStyle(fontSize: 18)),
-                      Text('Edad: ${petData!['age']}', style: TextStyle(fontSize: 18)),
-                      Text('Peso: ${petData!['weight']}', style: TextStyle(fontSize: 18)),
-                      Text('Color: ${petData!['color']}', style: TextStyle(fontSize: 18)),
-                      Text('Género: ${petData!['gender']}', style: TextStyle(fontSize: 18)),
+                      Expanded(
+                        child: ListView(
+                          children: [
+                            Text('Nombre: ${petData!['name']}', style: TextStyle(fontSize: 18)),
+                            Text('Raza: ${petData!['breed']}', style: TextStyle(fontSize: 18)),
+                            Text('Edad: ${petData!['age']}', style: TextStyle(fontSize: 18)),
+                            Text('Peso: ${petData!['weight']}', style: TextStyle(fontSize: 18)),
+                            Text('Color: ${petData!['color']}', style: TextStyle(fontSize: 18)),
+                            Text('Género: ${petData!['gender']}', style: TextStyle(fontSize: 18)),
+                          ],
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text('Volver'),
+                      ),
+                      const SizedBox(height: 8),
+                      ElevatedButton(
+                        onPressed: () async {
+                          final confirm = await showDialog<bool>(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('Eliminar Mascota'),
+                              content: const Text('¿Estás seguro de que deseas eliminar esta mascota?'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context, false),
+                                  child: const Text('Cancelar'),
+                                ),
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context, true),
+                                  child: const Text('Eliminar'),
+                                ),
+                              ],
+                            ),
+                          );
+                          if (confirm == true) {
+                            await PetProfileController.deletePet(widget.petId);
+                            Navigator.pop(context);
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                        ),
+                        child: const Text('Eliminar Mascota'),
+                      ),
                     ],
                   ),
                 ),

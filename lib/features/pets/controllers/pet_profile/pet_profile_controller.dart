@@ -30,4 +30,33 @@ class PetProfileController {
       return null;
     }
   }
-}
+  static Future<Map<String,dynamic>?> deletePet(String petId) async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) return null;
+
+      final token = await user.getIdToken();
+      final url = Uri.parse('http://10.0.2.2:8000/pet_profile/$petId/delete');
+        final response = await http.delete(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        print('Error al obtener perfil de mascota: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('Excepción: $e');
+      return null;
+    }
+    }
+  }
+
+
+
