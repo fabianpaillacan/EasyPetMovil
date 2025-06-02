@@ -12,7 +12,7 @@ class RegisterController {
     required String gender,
     required String password,
   }) async {
-    final url = Uri.parse('http://10.0.2.2:8000/register');
+    final url = Uri.parse('http://10.0.2.2:8000/user/register');
     try {
       final response = await http.post(
         url,

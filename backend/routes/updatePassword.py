@@ -3,7 +3,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from firebase_admin import auth
 from pydantic import BaseModel
 
-router = APIRouter()
+router = APIRouter(prefix="/update", tags=["update"])
 security = HTTPBearer()
 
 class PasswordUpdate(BaseModel):
@@ -19,7 +19,7 @@ async def get_current_user(
     except Exception:
         raise HTTPException(status_code=401, detail="Token inválido o expirado")
 
-@router.put("/update_password")
+@router.put("/password")
 async def update_password(
     data: PasswordUpdate = Body(...),
     user_id: str = Depends(get_current_user)

@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 from backend.firebase.config import db
 
-router = APIRouter()
+router = APIRouter(prefix="/pets", tags=["pets"])
 security = HTTPBearer()
 
 
@@ -32,7 +32,7 @@ async def get_current_user(
         )
 
 
-@router.post("/register_pet")
+@router.post("/register", status_code=201)
 async def register_pet(
     pet: PetRegisterRequest,
     current_user_uid: str = Depends(get_current_user),

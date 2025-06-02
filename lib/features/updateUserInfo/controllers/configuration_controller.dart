@@ -13,7 +13,7 @@ class ConfigurationController with ChangeNotifier {
 
     try {
       final token = await user.getIdToken();
-      final url = Uri.parse('http://10.0.2.2:8000/consult_user');
+      final url = Uri.parse('http://10.0.2.2:8000/user/information');
       final response = await http.get(
         url,
         headers: {
@@ -42,7 +42,7 @@ class ConfigurationController with ChangeNotifier {
 
     try {
       final token = await user.getIdToken();
-      final url = Uri.parse('http://10.0.2.2:8000/update_user');
+      final url = Uri.parse('http://10.0.2.2:8000/user/update');
 
       // Remove password from data before sending
       final sanitizedData = Map<String, dynamic>.from(data);

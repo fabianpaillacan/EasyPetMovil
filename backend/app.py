@@ -18,13 +18,10 @@ app.add_middleware(
 )
 
 # Registrar rutas
-app.include_router(auth.router)
-app.include_router(register.router)
-app.include_router(petRegister.router)
-app.include_router(petsListForUser.router)
-app.include_router(editInfoUser.router)
-app.include_router(updatePassword.router)
-app.include_router(
-    petsListForUser.router, prefix="/pets", tags=["pets"]
-)
-app.include_router(petProfile.router)
+app.include_router(auth.router) #ya esta listo la modificacion del endopoint /auth/user/ping
+app.include_router(register.router) #ya esta listo la modificacion del endopoint /user/register
+app.include_router(petRegister.router) #ya esta listo la modificacion del endopoint /pets/register
+app.include_router(petsListForUser.router) #ya esta listo la modificacion del endopoint /my/pets
+app.include_router(editInfoUser.router) #ya esta listo la modificacion del endopoint /user/information y /user/update
+app.include_router(updatePassword.router) #ya esta listo la modificacion del endopoint /update/password
+app.include_router(petProfile.router) #ya esta listo la modificacion del endopoint /{pet_id} con GET y DELETE

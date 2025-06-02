@@ -10,7 +10,7 @@ class ChangePasswordController {
 
       final token = await user.getIdToken();
       final response = await http.put(
-        Uri.parse('http://10.0.2.2:8000/update_password'),
+        Uri.parse('http://10.0.2.2:8000/update/password'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',

@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 from backend.firebase.config import db
 
-router = APIRouter()
+router = APIRouter(prefix="/user", tags=["user"])
 
 
 class RegisterRequest(BaseModel):
@@ -18,7 +18,7 @@ class RegisterRequest(BaseModel):
     password: str
 
 
-@router.post("/register")
+@router.post("/register", status_code=201)
 async def register_user(req: RegisterRequest):
     try:
 

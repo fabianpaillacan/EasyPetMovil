@@ -9,7 +9,7 @@ class PetProfileController {
 
     try {
       final token = await user.getIdToken();
-      final url = Uri.parse('http://10.0.2.2:8000/pet_profile/$petId');
+      final url = Uri.parse('http://10.0.2.2:8000/pets/$petId');
 
       final response = await http.get(
         url,
@@ -36,7 +36,7 @@ class PetProfileController {
       if (user == null) return null;
 
       final token = await user.getIdToken();
-      final url = Uri.parse('http://10.0.2.2:8000/pet_profile/$petId/delete');
+      final url = Uri.parse('http://10.0.2.2:8000/pets/$petId');
         final response = await http.delete(
         url,
         headers: {

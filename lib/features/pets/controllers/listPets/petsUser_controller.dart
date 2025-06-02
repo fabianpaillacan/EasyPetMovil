@@ -12,7 +12,7 @@ class PetController with ChangeNotifier {
 
     try {
       final token = await user.getIdToken();
-      final url = Uri.parse('http://10.0.2.2:8000/pets_list_for_user');
+      final url = Uri.parse('http://10.0.2.2:8000/my/pets');
       final response = await http.get(
         url,
         headers: {

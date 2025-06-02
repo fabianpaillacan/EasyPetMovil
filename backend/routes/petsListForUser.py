@@ -4,7 +4,7 @@ from firebase_admin import auth
 
 from backend.firebase.config import db
 
-router = APIRouter()
+router = APIRouter(prefix="/my", tags=["my"])
 security = HTTPBearer()
 
 
@@ -21,7 +21,7 @@ async def get_current_user(
         )
 
 
-@router.get("/pets_list_for_user")
+@router.get("/pets")
 async def pets_list_for_user(user_id: str = Depends(get_current_user)):
     try:
         user_ref = db.collection("users").document(user_id)

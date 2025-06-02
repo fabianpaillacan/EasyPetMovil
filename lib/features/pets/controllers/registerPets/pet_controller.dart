@@ -17,7 +17,7 @@ class PetControllerRegister with ChangeNotifier {
       return 'Usuario no autenticado';
     }
 
-    final url = Uri.parse('http://10.0.2.2:8000/register_pet');
+    final url = Uri.parse('http://10.0.2.2:8000/pets/register');
     try {
       final user = FirebaseAuth.instance.currentUser;
       final token = await user?.getIdToken();

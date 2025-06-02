@@ -4,7 +4,7 @@ from firebase_admin import auth
 
 from backend.firebase.config import db
 
-router = APIRouter()
+router = APIRouter(prefix="/pets", tags=["pets"])
 security = HTTPBearer()
 
 
@@ -21,7 +21,7 @@ async def get_current_user(
         )
 
 
-@router.get("/pet_profile/{pet_id}")
+@router.get("/{pet_id}")
 async def get_pet_profile(
     pet_id: str,
     user_id: str = Depends(get_current_user),
@@ -44,7 +44,7 @@ async def get_pet_profile(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.delete("/pet_profile/{pet_id}/delete")
+@router.delete("/{pet_id}")
 async def delete_pet_profile(
     pet_id: str,
     user_id: str = Depends(get_current_user),

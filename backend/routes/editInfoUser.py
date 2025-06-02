@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 from backend.firebase.config import db
 
-router = APIRouter()
+router = APIRouter(prefix="/user", tags=["user"])
 security = HTTPBearer()
 
 
@@ -22,7 +22,7 @@ async def get_current_user(
         )
 
 
-@router.get("/consult_user")
+@router.get("/information") # Endpoint para consultar la información del usuario
 async def consult_user(user_id: str = Depends(get_current_user)):
     try:
         # Obtener los datos del usuario
@@ -53,7 +53,7 @@ class UserUpdateRequest(BaseModel): #el basemodel es solo para validar el body q
     gender: str
 
 
-@router.put("/update_user")
+@router.put("/update") # Endpoint para actualizar la información del usuario
 async def update_user(
     user_id: str = Depends(get_current_user),
     data: UserUpdateRequest = Body(...),
