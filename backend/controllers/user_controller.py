@@ -64,3 +64,31 @@ async def update_user_info(user_id: str, data: PartialUserUpdateRequest):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+async def get_pets_for_user(user_id: str):
+    try:
+        user_ref = db.collection("users").document(user_id)
+        user_doc = user_ref.get()
+
+        if not user_doc.exists:
+            raise HTTPException(status_code=404, detail="Usuario no encontrado")
+
+        pets_ids = user_doc.to_dict().get("pets", [])
+
+        if not pets_ids:
+            return {"pets": []}
+
+        pets_data = []
+        for pet_id in pets_ids:
+            pet_ref = db.collection("pets").document(pet_id)
+            pet_doc = pet_ref.get()
+
+            if pet_doc.exists:
+                pet_data = pet_doc.to_dict()
+                pet_data['id'] = pet_doc.id  # Incluye el ID del documento
+                pets_data.append(pet_data)
+
+        return {"pets": pets_data}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

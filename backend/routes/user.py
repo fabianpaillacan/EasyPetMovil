@@ -32,3 +32,7 @@ async def update_user(
     data: PartialUserUpdateRequest = Body(...)
 ):
     return await user_controller.update_user_info(user_id, data)
+
+@router.get("/pets")
+async def pets_list_for_user(user_id: str = Depends(get_current_user)):
+    return await user_controller.get_pets_for_user(user_id)
