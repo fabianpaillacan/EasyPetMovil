@@ -1,18 +1,8 @@
-from fastapi import APIRouter, Depends, Header, HTTPException
-from firebase_admin import auth
+from fastapi import APIRouter, Depends
+from backend.utils.auth import get_current_user
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
-
-def verify_token(authorization: str = Header(...)):
-    try:
-        scheme, token = authorization.split()
-        decoded = auth.verify_id_token(token)
-        return decoded["uid"]
-    except Exception:
-        raise HTTPException(status_code=401, detail="Token inválido")
-
-
 @router.get("/user/ping", summary="Ping endpoint to verify user authentication")
-def ping(user_id: str = Depends(verify_token)):
+def ping(user_id: str = Depends(get_current_user)):
     return {"message": f"Hola, tu UID es {user_id}"}

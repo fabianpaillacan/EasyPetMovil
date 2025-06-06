@@ -1,22 +1,10 @@
 
-from fastapi import APIRouter, Body, Depends, HTTPException
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from firebase_admin import auth
+from fastapi import APIRouter, Body, Depends
+from backend.utils.auth import get_current_user 
 from backend.models.user import RegisterRequest, PartialUserUpdateRequest
 from backend.controllers import user_controller
 
 router = APIRouter(prefix="/user", tags=["user"])
-security = HTTPBearer()
-
-async def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(security),
-):
-    try:
-        token = credentials.credentials
-        decoded_token = auth.verify_id_token(token)
-        return decoded_token["uid"]
-    except Exception:
-        raise HTTPException(status_code=401, detail="Token inválido o expirado")
 
 @router.post("/register", status_code=201)
 async def register_user(req: RegisterRequest):

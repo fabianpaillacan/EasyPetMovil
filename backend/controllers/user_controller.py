@@ -8,13 +8,13 @@ from backend.models.user import RegisterRequest, PartialUserUpdateRequest
 
 async def create_user_account(req: RegisterRequest):
     try:
-        user_record = auth.create_user(email=req.email, password=req.password)
+        user_record = auth.create_user(email=req.email, password=req.password) # Crea el usuario en Firebase Authentication
         uid = user_record.uid
     except Exception as auth_error:
         raise HTTPException(status_code=400, detail=f"Error en autenticación: {auth_error}")
 
     try:
-        user_ref = db.collection("users").document(uid)
+        user_ref = db.collection("users").document(uid) # Crea una referencia al documento del usuario en Firestore
         user_data = {
             "first_name": req.first_name,
             "last_name": req.last_name,
@@ -26,7 +26,7 @@ async def create_user_account(req: RegisterRequest):
             "uid": uid,
             "created_at": firestore.SERVER_TIMESTAMP,
         }
-        user_ref.set(user_data)
+        user_ref.set(user_data) # Guarda el usuario en Firestore 
     except Exception as db_error:
         auth.delete_user(uid)
         raise HTTPException(status_code=400, detail=f"Error en base de datos: {db_error}")
