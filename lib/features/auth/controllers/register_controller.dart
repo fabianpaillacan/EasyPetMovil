@@ -29,7 +29,7 @@ class RegisterController {
         }),
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
         return data['message'] ?? 'Registro exitoso';
       } else {
