@@ -4,6 +4,7 @@ import 'package:easypet/features/auth/screens/forgotten_password.dart';
 import 'package:easypet/features/home/screens/home.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:easypet/core/services/firebase_auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -19,13 +20,15 @@ class _LoginScreenState extends State<LoginScreen> {
   String result = "";
   bool _obscurePassword = true;
 
+  final AuthController _authController = AuthController();
+
   void handleLogin() async {
     if (!_formKey.currentState!.validate()) return;
 
     final email = emailController.text;
     final password = passwordController.text;
 
-    final response = await AuthController.login(email, password);
+    final response = await _authController.login(email, password);
 
     if (!mounted) return;
 

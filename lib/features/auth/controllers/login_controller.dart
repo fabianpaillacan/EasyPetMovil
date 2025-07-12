@@ -1,47 +1,18 @@
-import 'dart:convert';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:http/http.dart' as http;
+import 'package:easypet/core/services/auth_service.dart';
+import 'package:easypet/core/services/firebase_auth_service.dart';
 
 class AuthController {
-  static Future<Map<String, dynamic>> login(
-    String email,
-    String password,
-  ) async {
-    try {
-      // Autenticación con Firebase
-      final userCredential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(
-            email: email.trim(),
-            password: password.trim(),
-          );
+  final AuthService _authService;
 
-      // Obtener el token del usuario
-      final idToken = await userCredential.user?.getIdToken();
-      if (idToken == null) {
-        return {"success": false, "message": "Error al obtener el token"};
-      }
-      
-      // Hacer ping al backend FastAPI
-      final response = await http.get(
-        Uri.parse('http://10.0.2.2:8000/auth/user/ping'), //usar esto solo en emulador
-        headers: {'Authorization': 'Bearer $idToken'},
-      );
+  AuthController({AuthService? authService}) 
+    : _authService = authService ?? FirebaseAuthServiceImpl();
 
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        return {
-          "success": true,
-          "message": data["message"] ?? "Login correcto pero sin mensaje",
-        };
-      } else {
-        return {
-          "success": false,
-          "message":
-              "Error en backend: ${response.statusCode} ${response.body}",
-        };
-      }
-    } catch (e) {
-      return {"success": false, "message": "Error en login: $e"};
-    }
+  Future<Map<String, dynamic>> login(String email, String password) async {
+    final result = await _authService.login(email, password);
+    
+    return {
+      "success": result.success,
+      "message": result.message,
+    };
   }
 }
