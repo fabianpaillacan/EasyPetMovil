@@ -1,5 +1,6 @@
 abstract class AuthService {
   Future<AuthResult> login(String email, String password);
+  Future<AuthResult> register(String email, String password);
 }
 
 class AuthResult {
