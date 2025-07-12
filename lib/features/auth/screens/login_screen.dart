@@ -110,6 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     hintText: 'you@example.com',
                     labelText: 'E-mail Address',
                     icon: Icon(Icons.email),
+                    iconColor: Colors.deepPurple,
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -128,9 +129,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     hintText: 'Password',
                     labelText: 'Enter your password',
                     icon: const Icon(Icons.lock),
+                    iconColor: Colors.deepPurple,
                     suffixIcon: IconButton(
                       icon: Icon(
                         _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                        color: Colors.deepPurple,
                       ),
                       onPressed: () {
                         setState(() {
