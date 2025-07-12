@@ -61,3 +61,6 @@ app.*.map.json
 .venv    
 # ignore pycache folder
 __pycache__/
+
+# Ignore Flutter SDK internal files for VS Code analysis
+/flutter/
