@@ -65,15 +65,20 @@ class _LoginScreenState extends State<LoginScreen> {
     final Size screenSize = media.size;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('EASYPET'),
-        titleTextStyle: GoogleFonts.poppins(
-          fontSize: 25,
-          fontWeight: FontWeight.bold,
-          color: Colors.black,
+              appBar: AppBar(
+          title: Padding(
+            padding: const EdgeInsets.only(top: 35.0),
+            child: Text(
+              'EASYPET',
+              style: GoogleFonts.poppins(
+                fontSize: 25,
+                fontWeight: FontWeight.bold,
+                color: const Color.fromARGB(255, 48, 45, 5),
+              ),
+            ),
+          ),
+          centerTitle: true,
         ),
-        centerTitle: true,
-      ),
       body: Container(
         padding: const EdgeInsets.all(20.0),
         child: Form(
@@ -84,8 +89,15 @@ class _LoginScreenState extends State<LoginScreen> {
                 padding: const EdgeInsets.all(20.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const <Widget>[
-                    FlutterLogo(size: 100.0), //ACA TENEMOS QUE PONER EL LOGO DE EASYPET
+                  children: <Widget>[
+                    Image.asset(
+                      'assets/images/logos/easypet_logo.jpg',
+                      width: 100.0,
+                      height: 100.0,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const FlutterLogo(size: 100.0);
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -181,7 +193,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: GestureDetector(
                         onTap: navigateToForgotPassword,
                         child: const Text(
-                          'Forgot Password',
+                          'Forgot Password?',
                           style: TextStyle( 
                             color: Colors.blue, // Puedes cambiar el color
                             fontSize: 16.0, // Tamaño del texto
@@ -192,7 +204,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ],
                 ),
               ),
-              Container(
+             /* Container(
                 width: screenSize.width,
                 child: Column(
                   children: <Widget>[
@@ -225,7 +237,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ],
                 ),
-              ),
+              ),*/
             ],
           ),
         ),
