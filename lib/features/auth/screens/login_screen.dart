@@ -3,6 +3,7 @@ import 'package:easypet/features/auth/screens/register_screen.dart';
 import 'package:easypet/features/auth/screens/forgotten_password.dart';
 import 'package:easypet/features/home/screens/home.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -16,6 +17,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String result = "";
+  bool _obscurePassword = true;
 
   void handleLogin() async {
     if (!_formKey.currentState!.validate()) return;
@@ -62,6 +64,12 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('EASYPET'),
+        titleTextStyle: GoogleFonts.poppins(
+          fontSize: 25,
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
+        ),
+        centerTitle: true,
       ),
       body: Container(
         padding: const EdgeInsets.all(20.0),
@@ -100,11 +108,21 @@ class _LoginScreenState extends State<LoginScreen> {
                 padding: const EdgeInsets.only(top: 10.0),
                 child: TextFormField(
                   controller: passwordController,
-                  obscureText: true,
-                  decoration: const InputDecoration(
+                  obscureText: _obscurePassword,
+                  decoration: InputDecoration(
                     hintText: 'Password',
                     labelText: 'Enter your password',
-                    icon: Icon(Icons.lock),
+                    icon: const Icon(Icons.lock),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _obscurePassword = !_obscurePassword;
+                        });
+                      },
+                    ),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -116,12 +134,13 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               Container(
                 width: screenSize.width,
-                child: Row(
+                child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Container(
                       height: 50.0,
-                      margin: const EdgeInsets.only(left: 10.0, top: 30.0),
+                      width: 250.0,
+                      margin: const EdgeInsets.only(left: 10.0, top: 20.0),
                       child: ElevatedButton(
                         onPressed: handleLogin,
                         style: ElevatedButton.styleFrom(
@@ -135,32 +154,38 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     Container(
                       height: 50.0,
-                      margin: const EdgeInsets.only(left: 20.0, top: 30.0),
+                      width: 250.0,
+                      margin: const EdgeInsets.only(left: 20.0, top: 20.0),
                       child: ElevatedButton(
                         onPressed: navigateToRegister,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.deepPurple,
+                          backgroundColor: Colors.white,
+                          side: BorderSide(
+                            color: Colors.deepPurple,
+                            width: 2.0,
+                          ),
                         ),
                         child: const Text(
-                          'Registration',
-                          style: TextStyle(color: Colors.white),
+                          'Sign Up',
+                          style: TextStyle(color: Colors.deepPurple),
                         ),
                       ),
                     ),
-                      Container(
+                     Container(
                       height: 50.0,
-                      margin: const EdgeInsets.only(left: 20.0, top: 30.0),
-                      child: ElevatedButton(
-                        onPressed: navigateToForgotPassword,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.deepPurple,
-                        ),
+                      margin: const EdgeInsets.only(left: 20.0, top: 10.0),
+                      alignment: Alignment.center, // Para alinear el texto a la izquierda
+                      child: GestureDetector(
+                        onTap: navigateToForgotPassword,
                         child: const Text(
                           'Forgot Password',
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle( 
+                            color: Colors.blue, // Puedes cambiar el color
+                            fontSize: 16.0, // Tamaño del texto
+                          ),
                         ),
                       ),
-                    ),
+                    )
                   ],
                 ),
               ),
@@ -169,10 +194,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Column(
                   children: <Widget>[
                     Container(
-                      margin: const EdgeInsets.only(left: 10.0, top: 20.0),
-                      child: Row(
+                      margin: const EdgeInsets.only(left: 10.0, top: 100.0),
+                      child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
+                          const Text('Login or sign up using'),
+                          const SizedBox(height: 5.0),
                           Container(
                             height: 50.0,
                             width: 210.0,
