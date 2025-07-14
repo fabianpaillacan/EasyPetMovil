@@ -51,6 +51,9 @@ async def create_pets(pet: RegisterRequestPets, current_user_uid: str = Depends(
             "weight": pet.weight,
             "color": pet.color,
             "gender": pet.gender,
+            "birth_date": pet.birth_date,
+            "species": pet.species,
+            #"image": pet.image, #nuevo campo
             "owner_id": pet.owner_id,
             "created_at": firestore.SERVER_TIMESTAMP,
         }

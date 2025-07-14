@@ -5,7 +5,7 @@ import 'package:easypet/features/pets/screens/pet_register_screen.dart';
 import 'package:flutter/material.dart';
 
 class PetList extends StatefulWidget {
-   final String token;
+  final String token;
 
   const PetList({super.key, required this.token});
 
@@ -33,12 +33,15 @@ class _PetListScreenState extends State<PetList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mis Mascotas',
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 20,
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.bold)),
+        title: const Text(
+          'Mis Mascotas',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 20,
+            fontFamily: 'Poppins',
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.white,
@@ -48,14 +51,17 @@ class _PetListScreenState extends State<PetList> {
             style: ElevatedButton.styleFrom(
               backgroundColor: Color(0xFF5B2075),
               foregroundColor: Colors.white, //color del texto
-              shape: RoundedRectangleBorder( //borde del boton
+              shape: RoundedRectangleBorder(
+                //borde del boton
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const PetRegisterScreen()),
+                MaterialPageRoute(
+                  builder: (context) => const PetRegisterScreen(),
+                ),
               );
             },
           ),
@@ -103,7 +109,11 @@ class _PetListScreenState extends State<PetList> {
                     backgroundColor: Colors.blueAccent,
                     child: Text(
                       pet['name'][0].toUpperCase(),
-                      style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 18),

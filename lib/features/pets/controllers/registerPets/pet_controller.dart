@@ -11,6 +11,8 @@ class PetControllerRegister with ChangeNotifier {
     required String color,
     required String gender,
     required String age,
+    required String birthDate,
+    required String species,
   }) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
@@ -34,6 +36,8 @@ class PetControllerRegister with ChangeNotifier {
           'weight': weight,
           'color': color,
           'gender': gender,
+          'birth_date': birthDate,
+          'species': species,
           'owner_id': user?.uid, // Enviamos el UID del usuario
         }),
       );

@@ -15,6 +15,8 @@ class _PetRegisterScreenState extends State<PetRegisterScreen> {
   final TextEditingController ageController = TextEditingController();
   final TextEditingController colorController = TextEditingController();
   final TextEditingController genderController = TextEditingController();
+  final TextEditingController birthDateController = TextEditingController();
+  final TextEditingController speciesController = TextEditingController();
   String? result;
 
   void registerPets() async {
@@ -31,6 +33,8 @@ class _PetRegisterScreenState extends State<PetRegisterScreen> {
         colorController
             .text; 
     final gender = genderController.text;
+    final birthDate = birthDateController.text; //nuevo campo
+    final species = speciesController.text; //nuevo campo
  
     final response = await PetControllerRegister.registerPets(
       name: name,
@@ -39,6 +43,8 @@ class _PetRegisterScreenState extends State<PetRegisterScreen> {
       age: age,
       color: color,
       gender: gender, 
+      birthDate: birthDate, //nuevo campo
+      species: species, //nuevo campo
     );
 
     setState(() {
@@ -64,6 +70,14 @@ class _PetRegisterScreenState extends State<PetRegisterScreen> {
             ),
             const SizedBox(height: 16),
             TextField(
+              controller: speciesController,
+              decoration: const InputDecoration(
+                labelText: 'Especie',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
               controller: breedController,
               decoration: const InputDecoration(
                 labelText: 'Raza',
@@ -78,6 +92,15 @@ class _PetRegisterScreenState extends State<PetRegisterScreen> {
                 border: OutlineInputBorder(),
               ),
               keyboardType: TextInputType.number,
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: birthDateController,
+              decoration: const InputDecoration(
+                labelText: 'Fecha de Nacimiento',
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.datetime,
             ),
             const SizedBox(height: 16),
             TextField(
