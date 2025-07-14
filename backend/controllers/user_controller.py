@@ -4,17 +4,20 @@ from firebase_admin import auth, firestore
 from fastapi import HTTPException
 from backend.firebase.config import db
 from backend.models.user import RegisterRequest, PartialUserUpdateRequest
+from datetime import datetime
 
 
 async def create_user_account(req: RegisterRequest):
     try:
-        user_record = auth.create_user(email=req.email, password=req.password) # Crea el usuario en Firebase Authentication
+        # Crear usuario en Firebase Authentication
+        user_record = auth.create_user(
+            email=req.email, 
+            password=req.password
+        )
         uid = user_record.uid
-    except Exception as auth_error:
-        raise HTTPException(status_code=400, detail=f"Error en autenticación: {auth_error}")
-
-    try:
-        user_ref = db.collection("users").document(uid) # Crea una referencia al documento del usuario en Firestore
+        
+        # Crear documento en Firestore
+        user_ref = db.collection("users").document(uid)
         user_data = {
             "first_name": req.first_name,
             "last_name": req.last_name,
@@ -26,12 +29,35 @@ async def create_user_account(req: RegisterRequest):
             "uid": uid,
             "created_at": firestore.SERVER_TIMESTAMP,
         }
-        user_ref.set(user_data) # Guarda el usuario en Firestore 
-    except Exception as db_error:
-        auth.delete_user(uid)
-        raise HTTPException(status_code=400, detail=f"Error en base de datos: {db_error}")
-
-    return {"message": "Usuario registrado correctamente"}
+        user_ref.set(user_data)
+        
+        # Crear respuesta serializable (sin SERVER_TIMESTAMP)
+        response_data = {
+            "first_name": req.first_name,
+            "last_name": req.last_name,
+            "rut": req.rut,
+            "birth_date": req.birth_date,
+            "phone": req.phone,
+            "email": req.email,
+            "gender": req.gender,
+            "uid": uid,
+            "created_at": datetime.now().isoformat(),
+        }
+        
+        return {"message": "Usuario registrado correctamente", "user": response_data}
+        
+    except auth.EmailAlreadyExistsError:
+        raise HTTPException(status_code=400, detail="El correo electrónico ya está registrado")
+    except auth.WeakPasswordError:
+        raise HTTPException(status_code=400, detail="La contraseña es muy débil")
+    except Exception as e:
+        # Si hay error en Firestore, eliminar el usuario de Firebase Auth
+        if 'uid' in locals():
+            try:
+                auth.delete_user(uid)
+            except:
+                pass
+        raise HTTPException(status_code=400, detail=f"Error al crear usuario: {str(e)}")
 
 
 async def get_user_info(user_id: str):

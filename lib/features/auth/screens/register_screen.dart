@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:easypet/features/auth/screens/login_screen.dart';
 import 'package:easypet/features/auth/controllers/register_controller.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -13,6 +12,7 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
+  final RegisterController _registerController = RegisterController();
 
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
@@ -27,52 +27,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Future<void> registerUser() async {
     if (!_formKey.currentState!.validate()) return;
 
-    final email = emailController.text.trim();
-
-    try {
-      // Validar si el correo ya está registrado en Firebase Auth
-      final methods = await FirebaseAuth.instance.fetchSignInMethodsForEmail(email);
-      if (methods.isNotEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("El correo ya está registrado"),
-            backgroundColor: Colors.red,
-          ),
-        );
-        return;
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Error al verificar el correo: $e"),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return;
-    }
-
     // Llamar al backend para registrar el usuario
-    final response = await RegisterController.registerUser(
+    final response = await _registerController.registerUser(
       firstName: firstNameController.text.trim(),
       lastName: lastNameController.text.trim(),
       rut: rutController.text.trim(),
       birthDate: birthDateController.text.trim(),
       phone: phoneController.text.trim(),
-      email: email,
+      email: emailController.text.trim(),
       gender: genderController.text.trim(),
       password: passwordController.text,
     );
 
     if (!mounted) return;
+    
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(response),
-        backgroundColor: response.contains("correctamente") ? Colors.green : Colors.red,
+        content: Text(response['message'] ?? 'Error desconocido'),
+        backgroundColor: response['success'] == true ? Colors.green : Colors.red,
         duration: const Duration(seconds: 2),
       ),
     );
 
-    if (response.contains('correctamente')) {
+    if (response['success'] == true) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const LoginScreen()),

@@ -1,9 +1,14 @@
+import 'package:easypet/core/services/api_config.dart';
 import 'dart:convert';
-import 'dart:ffi';
-import 'package:http/http.dart' as http;
 
 class RegisterController {
-  static Future<String> registerUser({
+  final ApiConfig _apiConfig;
+
+  RegisterController({
+    ApiConfig? apiConfig,
+  }) : _apiConfig = apiConfig ?? ApiConfig();
+
+  Future<Map<String, dynamic>> registerUser({
     required String firstName,
     required String lastName,
     required String rut,
@@ -13,12 +18,10 @@ class RegisterController {
     required String gender,
     required String password,
   }) async {
-    final url = Uri.parse('http://10.0.2.2:8000/user/register');
     try {
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
+      final response = await _apiConfig.post(
+        '${ApiConfig.baseUrl}/user/register',
+        body: {
           'first_name': firstName,
           'last_name': lastName,
           'rut': rut,
@@ -27,17 +30,27 @@ class RegisterController {
           'email': email,
           'gender': gender,
           'password': password,
-        }),
+        },
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
-        return data['message'] ?? 'Registro exitoso';
+        return {
+          'success': true,
+          'message': data['message'] ?? 'Registro exitoso',
+          'user': data['user'],
+        };
       } else {
-        return 'Error en el backend: ${response.statusCode}';
+        return {
+          'success': false,
+          'message': 'Error en el backend: ${response.statusCode} - ${response.body}',
+        };
       }
     } catch (e) {
-      return 'Error al registrar usuario: $e';
+      return {
+        'success': false,
+        'message': 'Error al registrar usuario: $e',
+      };
     }
   }
 }
