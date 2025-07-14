@@ -1,6 +1,7 @@
 import 'package:easypet/features/pets/controllers/listPets/petsUser_controller.dart';
 import 'package:easypet/features/pets/controllers/pet_profile/pet_profile_controller.dart';
 import 'package:easypet/features/pets/screens/pet_profile_screen.dart';
+import 'package:easypet/features/pets/screens/pet_register_screen.dart';
 import 'package:flutter/material.dart';
 
 class PetList extends StatefulWidget {
@@ -31,14 +32,32 @@ class _PetListScreenState extends State<PetList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Lista de Mascotas')),
+      appBar: AppBar(title: const Text('Mis Mascotas', 
+      style: TextStyle(color: Colors.black, 
+      fontSize: 20, 
+      fontFamily: 'Poppins',
+      fontWeight: FontWeight.bold)),
+      centerTitle: true,
+      elevation: 0,
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.add),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const PetRegisterScreen()),
+            );
+          },
+        ),
+      ]
+      ),
       body: ListView.builder(
         itemCount: pets.length,
         itemBuilder: (context, index) {
           final pet = pets[index];
           return ListTile(
             title: Text(
-              '${pet['name']} (${pet['id']})',
+              '${pet['name']} (${pet['id']})', //la ID en un tiempo mas se debe eliminar
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             leading: CircleAvatar(
