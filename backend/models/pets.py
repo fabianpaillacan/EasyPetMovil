@@ -8,7 +8,7 @@ class RegisterRequestPets (BaseModel):
     species: Optional[str] = None #opcional
     breed: Optional[str] = None #raza
     owner_id: str
-    color: str
+    color: Optional[str] = None #opcional
     weight: str
     gender: str
     #image: str  #investigar como subir una imagen a firebase 
