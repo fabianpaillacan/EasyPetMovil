@@ -30,67 +30,178 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Ejemplo de historial médico (puedes reemplazarlo por tus datos reales)
+    final List<Map<String, String>> medicalHistory = [
+      {
+        'icon': 'event',
+        'title': 'Consulta de rutina',
+        'date': '12 de enero de 2023',
+      },
+      {
+        'icon': 'vaccines',
+        'title': 'Vacuna contra la rabia',
+        'date': '20 de febrero de 2023',
+      },
+      {
+        'icon': 'medication',
+        'title': 'Tratamiento antiparasitario',
+        'date': '15 de marzo de 2023',
+      },
+      {
+        'icon': 'error_outline',
+        'title': 'Alergia a la carne de res',
+        'date': '10 de abril de 2023',
+      },
+    ]; //aca se debe agregar el historial medico de la mascota, no esta en firebase. Depende del backend Web
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Perfil de Mascota')),
-      body: isLoading
+      backgroundColor: const Color(0xFFF8F9FA),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: BackButton(color: Colors.black),
+        centerTitle: true,
+        title: const Text(
+          "Detalles de la mascota",
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+      body: isLoading || petData == null
           ? const Center(child: CircularProgressIndicator())
-          : petData == null
-              ? const Center(child: Text('No se pudo cargar la mascota'))
-              : Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: ListView(
+          : SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // Avatar grande
+                  CircleAvatar(
+                    radius: 60,
+                    backgroundColor: Colors.grey[200],
+                    backgroundImage: petData!['imageUrl'] != null
+                        ? NetworkImage(petData!['imageUrl'])
+                        : null,
+                    child: petData!['imageUrl'] == null 
+                        ? Text(
+                            petData!['name'][0].toUpperCase(),
+                            style: const TextStyle(
+                              color: Color(0xFF5B2075),
+                              fontSize: 48,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                        : null,
+                  ),
+                  const SizedBox(height: 18),
+                  // Nombre
+                  Text(
+                    petData!['name'],
+                    style: const TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  // Subtítulo (raza, especie, fecha de nacimiento)
+                  if (petData!['breed'] != null && petData!['species'] != null)
+                    Text(
+                      '${petData!['species']}, ${petData!['breed']}', //aca se debe agregar la raza de la mascota, no esta en firebase
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Color(0xFF4B8F7B),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  if (petData!['birth_date'] != null)
+                    Text(
+                      'Nacido el ${petData!['birth_date']}', //aca se debe agregar la fecha de nacimiento de la mascota, no esta en firebase
+                      style: const TextStyle(
+                        fontSize: 15,
+                        color: Color(0xFF4B8F7B),
+                      ),
+                    ),
+                  const SizedBox(height: 28),
+                  // Historial Médico
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Historial Médico',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[900],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  // Lista de historial médico
+                  ...medicalHistory.map((item) => Container(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100],
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Row(
                           children: [
-                            Text('Nombre: ${petData!['name']}', style: TextStyle(fontSize: 18)),
-                            Text('Raza: ${petData!['breed']}', style: TextStyle(fontSize: 18)),
-                            Text('Edad: ${petData!['age']}', style: TextStyle(fontSize: 18)),
-                            Text('Peso: ${petData!['weight']}', style: TextStyle(fontSize: 18)),
-                            Text('Color: ${petData!['color']}', style: TextStyle(fontSize: 18)),
-                            Text('Género: ${petData!['gender']}', style: TextStyle(fontSize: 18)),
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[200],
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Icon(
+                                _getIconData(item['icon']!),
+                                color: const Color(0xFF5B2075),
+                                size: 24,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    item['title']!,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    item['date']!,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Color(0xFF4B8F7B),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ],
                         ),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: const Text('Volver'),
-                      ),
-                      const SizedBox(height: 8),
-                      ElevatedButton(
-                        onPressed: () async {
-                          final confirm = await showDialog<bool>(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: const Text('Eliminar Mascota'),
-                              content: const Text('¿Estás seguro de que deseas eliminar esta mascota?'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context, false),
-                                  child: const Text('Cancelar'),
-                                ),
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context, true),
-                                  child: const Text('Eliminar'),
-                                ),
-                              ],
-                            ),
-                          );
-                          if (confirm == true) {
-                            await PetProfileController.deletePet(widget.petId);
-                            Navigator.pop(context);
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
-                        ),
-                        child: const Text('Eliminar Mascota'),
-                      ),
-                    ],
-                  ),
-                ),
+                      )),
+                ],
+              ),
+            ),
     );
+  }
+
+  IconData _getIconData(String iconName) {
+    switch (iconName) {
+      case 'event':
+        return Icons.event;
+      case 'vaccines':
+        return Icons.vaccines;
+      case 'medication':
+        return Icons.medication;
+      case 'error_outline':
+        return Icons.error_outline;
+      default:
+        return Icons.pets;
+    }
   }
 }

@@ -32,44 +32,43 @@ class _PetListScreenState extends State<PetList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Mis Mascotas', 
-      style: TextStyle(color: Colors.black, 
-      fontSize: 20, 
-      fontFamily: 'Poppins',
-      fontWeight: FontWeight.bold)),
-      centerTitle: true,
-      elevation: 0,
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.add),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const PetRegisterScreen()),
-            );
-          },
-        ),
-      ]
+      appBar: AppBar(
+        title: const Text('Mis Mascotas',
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 20,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight.bold)),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(0xFF5B2075),
+              foregroundColor: Colors.white, //color del texto
+              shape: RoundedRectangleBorder( //borde del boton
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const PetRegisterScreen()),
+              );
+            },
+          ),
+        ],
       ),
       body: ListView.builder(
         itemCount: pets.length,
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
         itemBuilder: (context, index) {
           final pet = pets[index];
-          return ListTile(
-            title: Text(
-              '${pet['name']} (${pet['id']})', //la ID en un tiempo mas se debe eliminar
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            leading: CircleAvatar(
-              backgroundColor: Colors.blueAccent,
-              child: Text(
-                pet['name'][0].toUpperCase(),
-                style: const TextStyle(color: Colors.white),
-              ),
-            ),
-            tileColor: index % 2 == 0 ? Colors.grey[200] : Colors.white,
-        onTap: () {
-              final petId = pet['id']; // <-- Este valor debe existir
+          return GestureDetector(
+            onTap: () {
+              final petId = pet['id'];
               if (petId != null && petId is String) {
                 Navigator.push(
                   context,
@@ -82,13 +81,61 @@ class _PetListScreenState extends State<PetList> {
                   const SnackBar(content: Text('ID de mascota no válido')),
                 );
               }
-            }
-
+            },
+            child: Container(
+              margin: const EdgeInsets.only(bottom: 16),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 28,
+                    backgroundColor: Colors.blueAccent,
+                    child: Text(
+                      pet['name'][0].toUpperCase(),
+                      style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  const SizedBox(width: 18),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          pet['name'],
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'ID: ${pet['id']}',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Icon(Icons.chevron_right, color: Colors.grey),
+                ],
+              ),
+            ),
           );
         },
       ),
     );
   }
 }
-
-//yo aca no deberia mostrar la informacion de la mascota. apreto el boton y me lleva a la informacion de la mascota.
