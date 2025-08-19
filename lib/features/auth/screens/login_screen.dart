@@ -4,7 +4,6 @@ import 'package:easypet/features/auth/screens/forgotten_password.dart';
 import 'package:easypet/features/home/screens/home.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:easypet/core/services/firebase_auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -19,11 +18,19 @@ class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String result = "";
   bool _obscurePassword = true;
+  bool _isLoading = false;
+  bool _isSuccess = false;
 
   final AuthController _authController = AuthController();
 
   void handleLogin() async {
     if (!_formKey.currentState!.validate()) return;
+
+    setState(() {
+      _isLoading = true;
+      result = "";
+      _isSuccess = false;
+    });
 
     final email = emailController.text;
     final password = passwordController.text;
@@ -32,15 +39,30 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (!mounted) return;
 
+    setState(() {
+      _isLoading = false;
+    });
+
     final success = response["success"] == true;
     if (success) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
-      );
+      setState(() {
+        _isSuccess = true;
+        result = "Login successful! Redirecting...";
+      });
+      
+      // Wait a moment to show success message
+      await Future.delayed(const Duration(seconds: 1));
+      
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
+      }
     } else {
       setState(() { 
         result = response["message"]?.toString() ?? "Error desconocido";
+        _isSuccess = false;
       });
     }
   }
@@ -52,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void navigateToForgotPassword() { //aqui voy a crear la navegacion a la pantalla de olvide mi contraseña
+  void navigateToForgotPassword() {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context)=> const ForgottenPasswordScreen())
@@ -65,20 +87,20 @@ class _LoginScreenState extends State<LoginScreen> {
     final Size screenSize = media.size;
 
     return Scaffold(
-              appBar: AppBar(
-          title: Padding(
-            padding: const EdgeInsets.only(top: 35.0),
-            child: Text(
-              'EASYPET',
-              style: GoogleFonts.poppins(
-                fontSize: 25,
-                fontWeight: FontWeight.bold,
-                color: const Color.fromARGB(255, 48, 45, 5),
-              ),
+      appBar: AppBar(
+        title: Padding(
+          padding: const EdgeInsets.only(top: 35.0),
+          child: Text(
+            'EASYPET',
+            style: GoogleFonts.poppins(
+              fontSize: 25,
+              fontWeight: FontWeight.bold,
+              color: const Color.fromARGB(255, 48, 45, 5),
             ),
           ),
-          centerTitle: true,
         ),
+        centerTitle: true,
+      ),
       body: Container(
         padding: const EdgeInsets.all(20.0),
         child: Form(
@@ -150,6 +172,25 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                 ),
               ),
+              // Error message display
+              if (result.isNotEmpty)
+                Container(
+                  margin: const EdgeInsets.only(top: 10.0),
+                  padding: const EdgeInsets.all(10.0),
+                  decoration: BoxDecoration(
+                    color: _isSuccess ? Colors.green.shade50 : Colors.red.shade50,
+                    borderRadius: BorderRadius.circular(5.0),
+                    border: Border.all(color: _isSuccess ? Colors.green.shade200 : Colors.red.shade200),
+                  ),
+                  child: Text(
+                    result,
+                    style: TextStyle(
+                      color: _isSuccess ? Colors.green.shade700 : Colors.red.shade700,
+                      fontSize: 14.0,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
               Container(
                 width: screenSize.width,
                 child: Column(
@@ -160,14 +201,23 @@ class _LoginScreenState extends State<LoginScreen> {
                       width: 250.0,
                       margin: const EdgeInsets.only(left: 10.0, top: 20.0),
                       child: ElevatedButton(
-                        onPressed: handleLogin,
+                        onPressed: _isLoading ? null : handleLogin,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.deepPurple,
                         ),
-                        child: const Text(
-                          'Login',
-                          style: TextStyle(color: Colors.white),
-                        ),
+                        child: _isLoading
+                            ? const SizedBox(
+                                width: 20.0,
+                                height: 20.0,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.0,
+                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                ),
+                              )
+                            : const Text(
+                                'Login',
+                                style: TextStyle(color: Colors.white),
+                              ),
                       ),
                     ),
                     Container(
@@ -175,7 +225,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       width: 250.0,
                       margin: const EdgeInsets.only(left: 20.0, top: 20.0),
                       child: ElevatedButton(
-                        onPressed: navigateToRegister,
+                        onPressed: _isLoading ? null : navigateToRegister,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
                           side: BorderSide(
@@ -189,17 +239,17 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-                     Container(
+                    Container(
                       height: 50.0,
                       margin: const EdgeInsets.only(left: 20.0, top: 10.0),
-                      alignment: Alignment.center, // Para alinear el texto a la izquierda
+                      alignment: Alignment.center,
                       child: GestureDetector(
-                        onTap: navigateToForgotPassword,
+                        onTap: _isLoading ? null : navigateToForgotPassword,
                         child: const Text(
                           'Forgot Password?',
                           style: TextStyle( 
-                            color: Colors.blue, // Puedes cambiar el color
-                            fontSize: 16.0, // Tamaño del texto
+                            color: Colors.blue,
+                            fontSize: 16.0,
                           ),
                         ),
                       ),
@@ -207,40 +257,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   ],
                 ),
               ),
-             /* Container(
-                width: screenSize.width,
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      margin: const EdgeInsets.only(left: 10.0, top: 100.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          const Text('Login or sign up using'),
-                          const SizedBox(height: 5.0),
-                          Container(
-                            height: 50.0,
-                            width: 210.0,
-                            child: ElevatedButton.icon(
-                              onPressed: () {
-                                // Implementa el inicio de sesión con Google aquí
-                              },
-                              icon: const Icon(Icons.g_mobiledata, color: Colors.white),
-                              label: const Text(
-                                'Login with Google+',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),*/
             ],
           ),
         ),

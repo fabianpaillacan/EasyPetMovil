@@ -24,14 +24,14 @@ class _ForgottenPasswordScreenState extends State<ForgottenPasswordScreen> {
 
     if (!mounted) return;
 
-    if (response.success) {
+    if (response['success']) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(response.message)),
+        SnackBar(content: Text(response['message'])),
       );
       Navigator.pop(context); // Regresa a la pantalla anterior (por ejemplo, Login)
     } else {
       setState(() {
-        resultMessage = response.message;
+        resultMessage = response['message'];
       });
     }
   }

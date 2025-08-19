@@ -35,12 +35,4 @@ class ConfigurationController {
       };
     }
   }
-
-  static Future<Map<String, dynamic>> getConfigUser() async {
-    return await getUserInfo();
-  }
-
-  static Future<void> updateConfigUser(Map<String, dynamic> userData) async {
-    await updateUserInfo(userData);
-  }
 }

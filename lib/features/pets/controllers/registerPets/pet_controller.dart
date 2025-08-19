@@ -1,51 +1,91 @@
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:firebase_auth/firebase_auth.dart';
-import 'dart:convert';
+import 'package:easypet/core/services/pet_service.dart';
+import 'package:easypet/core/services/firebase_auth_service.dart';
 
-class PetControllerRegister with ChangeNotifier {
+class PetController {
+  static Future<Map<String, dynamic>> registerPet(Map<String, dynamic> petData) async {
+    try {
+      // Get current Firebase user
+      final currentUser = FirebaseAuthServiceImpl().getCurrentUser();
+      print('DEBUG: Current Firebase user: ${currentUser?.uid}');
+      print('DEBUG: Current Firebase user email: ${currentUser?.email}');
+      
+      if (currentUser == null) {
+        return {
+          'success': false,
+          'message': 'Usuario no autenticado. Por favor inicie sesión.',
+        };
+      }
+
+      // Get Firebase ID token
+      final idToken = await currentUser.getIdToken();
+      print('DEBUG: Firebase ID token: ${idToken?.substring(0, 20)}...');
+      
+      if (idToken == null) {
+        return {
+          'success': false,
+          'message': 'Error al obtener el token de autenticación.',
+        };
+      }
+
+      final result = await PetService.registerPet(petData, idToken);
+      return {
+        'success': true,
+        'message': 'Mascota registrada exitosamente',
+        'data': result,
+      };
+    } catch (e) {
+      print('DEBUG: Error in registerPet: $e');
+      return {
+        'success': false,
+        'message': 'Error registering pet: $e',
+      };
+    }
+  }
+}
+
+class PetControllerRegister {
   static Future<String> registerPets({
     required String name,
     required String breed,
     required String weight,
+    required String age,
     required String color,
     required String gender,
-    required String age,
   }) async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      return 'Usuario no autenticado';
-    }
-
-    final url = Uri.parse('http://10.0.2.2:8000/pets/register');
     try {
-      final user = FirebaseAuth.instance.currentUser;
-      final token = await user?.getIdToken();
-      final response = await http.post(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: jsonEncode({
-          'name': name,
-          'breed': breed,
-          'age': age,
-          'weight': weight,
-          'color': color,
-          'gender': gender,
-          'owner_id': user?.uid, // Enviamos el UID del usuario
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        return data['message'] ?? 'Registro de mascota exitoso';
-      } else {
-        return 'Error en el backend: ${response.statusCode}';
+      // Get current Firebase user
+      final currentUser = FirebaseAuthServiceImpl().getCurrentUser();
+      print('DEBUG: Current Firebase user: ${currentUser?.uid}');
+      print('DEBUG: Current Firebase user email: ${currentUser?.email}');
+      
+      if (currentUser == null) {
+        return 'Usuario no autenticado. Por favor inicie sesión.';
       }
+
+      // Get Firebase ID token
+      final idToken = await currentUser.getIdToken();
+      print('DEBUG: Firebase ID token: ${idToken?.substring(0, 20)}...');
+      
+      if (idToken == null) {
+        return 'Error al obtener el token de autenticación.';
+      }
+
+      final petData = {
+        'name': name,
+        'breed': breed,
+        'weight': double.tryParse(weight) ?? 0.0,
+        'age': int.tryParse(age) ?? 0,
+        'color': color,
+        'gender': gender,
+        'species': 'dog', // Default species
+        'is_active': true,
+      };
+      
+      final result = await PetService.registerPet(petData, idToken);
+      return 'Mascota registrada exitosamente';
     } catch (e) {
-      return 'Error al registrar mascota: $e';
+      print('DEBUG: Error in registerPets: $e');
+      return 'Error registering pet: $e';
     }
   }
 }

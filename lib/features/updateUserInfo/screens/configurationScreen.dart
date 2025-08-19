@@ -2,6 +2,16 @@ import 'package:easypet/features/updateUserInfo/controllers/configuration_contro
 import 'package:flutter/material.dart';
 import 'package:easypet/features/home/screens/home.dart';
 
+// Wrapper class for HomeScreen compatibility
+class ConfigurationScreen extends StatelessWidget {
+  const ConfigurationScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const ConfigUser();
+  }
+}
+
 class ConfigUser extends StatefulWidget {
   const ConfigUser({super.key});
 

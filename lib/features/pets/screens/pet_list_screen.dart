@@ -4,6 +4,16 @@ import 'package:easypet/features/pets/screens/pet_profile_screen.dart';
 import 'package:easypet/features/pets/screens/pet_register_screen.dart';
 import 'package:flutter/material.dart';
 
+// Wrapper class for HomeScreen compatibility
+class PetListScreen extends StatelessWidget {
+  const PetListScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const PetList(token: "dev_token_123");
+  }
+}
+
 class PetList extends StatefulWidget {
    final String token;
 
@@ -68,7 +78,7 @@ class _PetListScreenState extends State<PetList> {
           final pet = pets[index];
           return GestureDetector(
             onTap: () {
-              final petId = pet['id'];
+              final petId = pet['pet_id'];
               if (petId != null && petId is String) {
                 Navigator.push(
                   context,
@@ -120,7 +130,7 @@ class _PetListScreenState extends State<PetList> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'ID: ${pet['id']}',
+                          'ID: ${pet['pet_id']}',
                           style: const TextStyle(
                             fontSize: 14,
                             color: Colors.grey,
