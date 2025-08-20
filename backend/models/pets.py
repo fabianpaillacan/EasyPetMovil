@@ -9,7 +9,7 @@ class RegisterRequestPets (BaseModel):
     breed: Optional[str] = None #raza
     owner_id: str
     color: Optional[str] = None #opcional
-    weight: str
+    #weight: str
     gender: str
     #image: str  #investigar como subir una imagen a firebase 
     birth_date: str #nuevo campo

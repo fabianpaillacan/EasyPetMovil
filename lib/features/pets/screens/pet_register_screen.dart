@@ -148,13 +148,13 @@ class _PetRegisterScreenState extends State<PetRegisterScreen> {
               keyboardType: TextInputType.number,
               validator: (value) => value == null || value.isEmpty ? 'Campo requerido' : null,
             ),
-            const SizedBox(height: 16),
+           /* const SizedBox(height: 16),
             _buildTextField(
               controller: weightController,
               label: 'Peso',
               hint: 'Peso de la mascota',
               icon: Icons.scale,
-            ),
+            ),*/
             const SizedBox(height: 16),
             _buildTextField(
               controller: colorController,

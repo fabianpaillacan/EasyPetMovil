@@ -33,7 +33,7 @@ class PetControllerRegister with ChangeNotifier {
           'name': name,
           'breed': breed,
           'age': age,
-          'weight': weight,
+          //'weight': weight,
           'color': color,
           'gender': gender,
           'birth_date': birthDate,
