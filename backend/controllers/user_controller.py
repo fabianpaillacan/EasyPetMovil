@@ -16,7 +16,7 @@ async def create_user_account(req: RegisterRequest):
         )
         uid = user_record.uid
         
-        # Crear documento en Firestore
+        # Crear documento en FirestorePet
         user_ref = db.collection("users").document(uid)
         user_data = {
             "first_name": req.first_name,

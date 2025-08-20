@@ -43,7 +43,7 @@ class RegisterController {
       } else {
         return {
           'success': false,
-          'message': 'Error en el backend: ${response.statusCode} - ${response.body}',
+          'message': 'Error en el backend: ${response.statusCode} - ${response.body}', //Este sera lo que aparezca en el frontend, eliminar el error en el backend. Mantener solo el mensaje del problema.
         };
       }
     } catch (e) {
