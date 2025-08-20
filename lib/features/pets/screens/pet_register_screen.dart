@@ -15,30 +15,39 @@ class _PetRegisterScreenState extends State<PetRegisterScreen> {
   final TextEditingController weightController = TextEditingController();
   final TextEditingController ageController = TextEditingController();
   final TextEditingController colorController = TextEditingController();
-  final TextEditingController genderController = TextEditingController();
   final TextEditingController birthDateController = TextEditingController();
   final TextEditingController speciesController = TextEditingController();
+  
+  // Eliminamos el controlador de texto para género y usamos un valor String
+  String? selectedGender; // 'Macho', 'Hembra', null
   String? result;
 
   void registerPets() async {
     final name = nameController.text;
     final breed = breedController.text;
-    final weight = weightController.text;
+    //final weight = weightController.text;
     final age = ageController.text;
     final color = colorController.text;
-    final gender = genderController.text;
-    final birthDate = birthDateController.text; //nuevo campo
-    final species = speciesController.text; //nuevo campo
+    final birthDate = birthDateController.text;
+    final species = speciesController.text;
+
+    // Validar que se haya seleccionado un género
+    if (selectedGender == null) {
+      setState(() {
+        result = 'Por favor selecciona el género de la mascota';
+      });
+      return;
+    }
 
     final response = await PetControllerRegister.registerPets(
       name: name,
       breed: breed,
-      weight: weight,
+      //weight: weight,
       age: age,
       color: color,
-      gender: gender,
-      birthDate: birthDate, //nuevo campo
-      species: species, //nuevo campo
+      gender: selectedGender!, // Usamos el valor del dropdown
+      birthDate: birthDate,
+      species: species,
     );
 
     setState(() {
@@ -96,7 +105,6 @@ class _PetRegisterScreenState extends State<PetRegisterScreen> {
               hint: 'Especie de la mascota',
               icon: Icons.cruelty_free,
               keyboardType: TextInputType.text,
-              //validator: (value) => value == null || value.isEmpty ? 'Campo requerido' : null,
             ),
             const SizedBox(height: 16),
             _buildTextField(
@@ -105,40 +113,9 @@ class _PetRegisterScreenState extends State<PetRegisterScreen> {
               hint: 'Raza de la mascota',
               icon: Icons.pets,
               keyboardType: TextInputType.text,
-              //validator: (value) => value == null || value.isEmpty ? 'Campo requerido' : null,
             ),
             const SizedBox(height: 16),
-            Expanded(
-              child: _buildTextField(
-                controller: birthDateController,
-                label: 'Fecha de Nacimiento',
-                hint: 'DD/MM/AAAA',
-                icon: Icons.calendar_today,
-                readOnly: true,
-                onTap: () async {
-                  FocusScope.of(context).requestFocus(FocusNode());
-                  DateTime? pickedDate = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime(2000),
-                    firstDate: DateTime(1900),
-                    lastDate: DateTime.now(),
-                    locale: const Locale('es', ''),
-                  );
-                  if (pickedDate != null) {
-                    String formattedDate =
-                        "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-                    setState(() {
-                      birthDateController.text = formattedDate;
-                    });
-                  }
-                },
-                validator:
-                    (value) =>
-                        value == null || value.isEmpty
-                            ? 'Campo requerido'
-                            : null,
-              ),
-            ),
+            _buildDateField(), // Campo de fecha separado
             const SizedBox(height: 16),
             _buildTextField(
               controller: ageController,
@@ -148,13 +125,6 @@ class _PetRegisterScreenState extends State<PetRegisterScreen> {
               keyboardType: TextInputType.number,
               validator: (value) => value == null || value.isEmpty ? 'Campo requerido' : null,
             ),
-           /* const SizedBox(height: 16),
-            _buildTextField(
-              controller: weightController,
-              label: 'Peso',
-              hint: 'Peso de la mascota',
-              icon: Icons.scale,
-            ),*/
             const SizedBox(height: 16),
             _buildTextField(
               controller: colorController,
@@ -162,17 +132,10 @@ class _PetRegisterScreenState extends State<PetRegisterScreen> {
               hint: 'Color de la mascota',
               icon: Icons.color_lens,
               keyboardType: TextInputType.text,
-              //validator: (value) => value == null || value.isEmpty ? 'Campo requerido' : null,
             ),
             const SizedBox(height: 16),
-            _buildTextField(
-              controller: genderController,
-              label: 'Género',
-              hint: 'Género de la mascota',
-              icon: Icons.pets,
-              keyboardType: TextInputType.text,
-              validator: (value) => value == null || value.isEmpty ? 'Campo requerido' : null,
-            ),
+            // Dropdown para el género en lugar de TextField
+            _buildGenderDropdown(),
             const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
@@ -210,7 +173,112 @@ class _PetRegisterScreenState extends State<PetRegisterScreen> {
             ],
           ],
         ),
-        
+      ),
+    );
+  }
+
+  // Widget para el dropdown de género
+  Widget _buildGenderDropdown() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: DropdownButtonFormField<String>(
+        value: selectedGender,
+        decoration: InputDecoration(
+          labelText: 'Género',
+          prefixIcon: Icon(Icons.pets, color: Colors.deepPurple),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.0),
+            borderSide: BorderSide.none,
+          ),
+          filled: true,
+          fillColor: Colors.white,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16.0,
+            vertical: 16.0,
+          ),
+        ),
+        items: const [
+          DropdownMenuItem(
+            value: 'Macho',
+            child: Text('Macho'),
+          ),
+          DropdownMenuItem(
+            value: 'Hembra',
+            child: Text('Hembra'),
+          ),
+        ],
+        onChanged: (String? newValue) {
+          setState(() {
+            selectedGender = newValue;
+          });
+        },
+        validator: (value) => value == null ? 'Selecciona el género' : null,
+      ),
+    );
+  }
+
+  // Widget separado para el campo de fecha
+  Widget _buildDateField() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: TextFormField(
+        controller: birthDateController,
+        readOnly: true,
+        onTap: () async {
+          FocusScope.of(context).requestFocus(FocusNode());
+          DateTime? pickedDate = await showDatePicker(
+            context: context,
+            initialDate: DateTime.now(),
+            firstDate: DateTime(1900),
+            lastDate: DateTime.now(),
+            locale: const Locale('es', ''),
+          );
+          if (pickedDate != null) {
+            String formattedDate =
+                "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+            setState(() {
+              birthDateController.text = formattedDate;
+            });
+          }
+        },
+        decoration: InputDecoration(
+          labelText: 'Fecha de Nacimiento',
+          hintText: 'DD/MM/AAAA',
+          prefixIcon: Icon(Icons.calendar_today, color: Colors.deepPurple),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.0),
+            borderSide: BorderSide.none,
+          ),
+          filled: true,
+          fillColor: Colors.white,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16.0,
+            vertical: 16.0,
+          ),
+        ),
+        validator: (value) => value == null || value.isEmpty ? 'Campo requerido' : null,
       ),
     );
   }
