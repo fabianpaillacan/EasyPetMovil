@@ -7,7 +7,7 @@ class PetControllerRegister with ChangeNotifier {
   static Future<String> registerPets({
     required String name,
     required String breed,
-    required String weight,
+    //required String weight,
     required String color,
     required String gender,
     required String age,
