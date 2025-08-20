@@ -48,7 +48,7 @@ async def create_pets(pet: RegisterRequestPets, current_user_uid: str = Depends(
             "name": pet.name,
             "breed": pet.breed,
             "age": pet.age,
-            "weight": pet.weight,
+            #"weight": pet.weight,
             "color": pet.color,
             "gender": pet.gender,
             "birth_date": pet.birth_date,
