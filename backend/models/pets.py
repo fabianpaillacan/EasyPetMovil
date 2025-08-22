@@ -3,14 +3,16 @@ from typing import Optional
 from datetime import datetime
 
 class RegisterRequestPets (BaseModel):
-    name: str
-    age: str
-    species: Optional[str] = None
-    breed: Optional[str] = None
+    name: str #obligatorio
+    age: str 
+    species: Optional[str] = None #opcional
+    breed: Optional[str] = None #raza
     owner_id: str
-    color: str
-    weight: str
+    color: Optional[str] = None #opcional
+    #weight: str
     gender: str
+    #image: str  #investigar como subir una imagen a firebase 
+    birth_date: str #nuevo campo
     #description: Optional[str] = None
     created_at: datetime = datetime.now()
     #updated_at: datetime = datetime.now()

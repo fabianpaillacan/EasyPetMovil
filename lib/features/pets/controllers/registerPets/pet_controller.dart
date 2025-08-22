@@ -7,10 +7,12 @@ class PetControllerRegister with ChangeNotifier {
   static Future<String> registerPets({
     required String name,
     required String breed,
-    required String weight,
+    //required String weight,
     required String color,
     required String gender,
     required String age,
+    required String birthDate,
+    required String species,
   }) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
@@ -31,14 +33,16 @@ class PetControllerRegister with ChangeNotifier {
           'name': name,
           'breed': breed,
           'age': age,
-          'weight': weight,
+          //'weight': weight,
           'color': color,
           'gender': gender,
+          'birth_date': birthDate,
+          'species': species,
           'owner_id': user?.uid, // Enviamos el UID del usuario
         }),
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
         return data['message'] ?? 'Registro de mascota exitoso';
       } else {

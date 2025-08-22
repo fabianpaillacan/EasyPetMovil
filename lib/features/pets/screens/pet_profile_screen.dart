@@ -104,24 +104,20 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  // Subtítulo (raza, especie, fecha de nacimiento)
-                  if (petData!['breed'] != null && petData!['species'] != null)
-                    Text(
-                      '${petData!['species']}, ${petData!['breed']}', //aca se debe agregar la raza de la mascota, no esta en firebase
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Color(0xFF4B8F7B),
-                        fontWeight: FontWeight.w500,
-                      ),
+                  Text(
+                    petData!['species'],
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Color(0xFF4B8F7B),
                     ),
-                  if (petData!['birth_date'] != null)
-                    Text(
-                      'Nacido el ${petData!['birth_date']}', //aca se debe agregar la fecha de nacimiento de la mascota, no esta en firebase
-                      style: const TextStyle(
-                        fontSize: 15,
-                        color: Color(0xFF4B8F7B),
-                      ),
+                  ),
+                  Text(
+                    petData!['birth_date'] ?? 'No hay fecha de nacimiento',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Color(0xFF4B8F7B),
                     ),
+                  ),
                   const SizedBox(height: 28),
                   // Historial Médico
                   Align(
