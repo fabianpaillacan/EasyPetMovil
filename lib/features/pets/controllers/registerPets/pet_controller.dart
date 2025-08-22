@@ -47,10 +47,12 @@ class PetControllerRegister {
   static Future<String> registerPets({
     required String name,
     required String breed,
-    required String weight,
+    //required String weight,
     required String age,
     required String color,
     required String gender,
+    required String birthDate,
+    required String species,
   }) async {
     try {
       // Get current Firebase user
@@ -73,11 +75,12 @@ class PetControllerRegister {
       final petData = {
         'name': name,
         'breed': breed,
-        'weight': double.tryParse(weight) ?? 0.0,
+        //'weight': double.tryParse(weight) ?? 0.0,
         'age': int.tryParse(age) ?? 0,
         'color': color,
         'gender': gender,
-        'species': 'dog', // Default species
+        'species': species,
+        'birth_date': birthDate,
         'is_active': true,
       };
       
