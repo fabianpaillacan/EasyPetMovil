@@ -30,4 +30,5 @@ flutter:
 
   assets:
     - assets/images/
-    - assets/images/logos/ 
+    - assets/images/logos/
+    - assets/mascotas.json 
