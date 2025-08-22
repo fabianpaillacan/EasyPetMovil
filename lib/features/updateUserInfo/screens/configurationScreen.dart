@@ -16,10 +16,10 @@ class _ConfigUserState extends State<ConfigUser> {
   final TextEditingController _birthDateController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _genderController = TextEditingController();
 
   bool _isLoading = true;
-
+  String? selectedGender;
+  
   @override
   void initState() {
     super.initState();
@@ -33,7 +33,6 @@ class _ConfigUserState extends State<ConfigUser> {
     _birthDateController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
-    _genderController.dispose();
     super.dispose();
   }
 
@@ -46,7 +45,7 @@ class _ConfigUserState extends State<ConfigUser> {
       _birthDateController.text = userInfo['birth_date'] ?? '';
       _emailController.text = userInfo['email'] ?? '';
       _phoneController.text = userInfo['phone'] ?? '';
-      _genderController.text = userInfo['gender'] ?? '';  //ojala poder hacer dropdown
+      selectedGender = userInfo['gender'] ?? ''; // ← CORREGIDO: Asignar a selectedGender
       _isLoading = false;
     });
   }
@@ -58,7 +57,7 @@ class _ConfigUserState extends State<ConfigUser> {
       "birth_date": _birthDateController.text,
       "email": _emailController.text,
       "phone": _phoneController.text,
-      "gender": _genderController.text,
+      "gender": selectedGender!, // ← CORREGIDO: Usar selectedGender
     };
 
     await ConfigurationController.updateConfigUser(data);
@@ -71,57 +70,56 @@ class _ConfigUserState extends State<ConfigUser> {
         MaterialPageRoute(builder: (context) => const HomeScreen()),
         (route) => false,
       );
-
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Configuración de Usuario')),
-      body:
-          _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : SingleChildScrollView(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildTextField(
-                      'Nombre',
-                      _firstNameController,
-                      'Ej: Humberto',
-                    ),
-                    const SizedBox(height: 16),
-                    _buildTextField(
-                      'Apellido Paterno',
-                      _lastNameController,
-                      'Ej: Suazo',
-                    ),
-                    const SizedBox(height: 16),
-                    _buildTextField(
-                      'Fecha de Nacimiento',
-                      _birthDateController,
-                      'Ej: 10/03/2002',
-                    ),
-                    const SizedBox(height: 16),
-                    _buildTextField(
-                      'Correo Electrónico',
-                      _emailController,
-                      'Ej: example@gmail.com',
-                    ),
-                    const SizedBox(height: 16),
-                    _buildTextField(
-                      'Teléfono',
-                      _phoneController,
-                      'Ej: 912345678',
-                    ),
-                    const SizedBox(height: 16),
-                    _buildGenderField(),
-                    const SizedBox(height: 32),
-                    _buildActionButtons(),
-                  ],
-                ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildTextField(
+                    'Nombre',
+                    _firstNameController,
+                    'Ej: Humberto',
+                  ),
+                  const SizedBox(height: 16),
+                  _buildTextField(
+                    'Apellido Paterno',
+                    _lastNameController,
+                    'Ej: Suazo',
+                  ),
+                  const SizedBox(height: 16),
+                  _buildTextField(
+                    'Fecha de Nacimiento',
+                    _birthDateController,
+                    'Ej: 10/03/2002',
+                  ),
+                  const SizedBox(height: 16),
+                  _buildTextField(
+                    'Correo Electrónico',
+                    _emailController,
+                    'Ej: example@gmail.com',
+                  ),
+                  const SizedBox(height: 16),
+                  _buildTextField(
+                    'Teléfono',
+                    _phoneController,
+                    'Ej: 912345678',
+                  ),
+                  const SizedBox(height: 16),
+                  // ← CORREGIDO: Widget de género correctamente colocado
+                  _buildGenderSection(),
+                  const SizedBox(height: 32),
+                  _buildActionButtons(),
+                ],
               ),
+            ),
     );
   }
 
@@ -157,29 +155,56 @@ class _ConfigUserState extends State<ConfigUser> {
     );
   }
 
-  Widget _buildGenderField() {
+  // ← CORREGIDO: Widget separado para la sección de género
+  Widget _buildGenderSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Género',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 4),
-        TextField(
-          controller: _genderController,
-          decoration: InputDecoration(
-            hintText: 'Ingrese su género',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 14,
-            ),
-          ),
-        ),
+        const SizedBox(height: 8),
+        _buildGenderDropdown(),
       ],
+    );
+  }
+
+  Widget _buildGenderDropdown() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8.0),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: DropdownButtonFormField<String>(
+        value: selectedGender,
+        decoration: InputDecoration(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+          border: InputBorder.none,
+          prefixIcon: const Icon(Icons.transgender, color: Colors.deepPurple),
+        ),
+        items: const [
+          DropdownMenuItem(
+            value: 'Masculino',
+            child: Text('Masculino'),
+          ),
+          DropdownMenuItem(
+            value: 'Femenino',
+            child: Text('Femenino'),
+          ),
+          DropdownMenuItem(
+            value: 'Otro',
+            child: Text('Otro'),
+          ),
+        ],
+        onChanged: (String? newValue) {
+          setState(() {
+            selectedGender = newValue;
+          });
+        },
+        validator: (value) => value == null ? 'Selecciona el género' : null,
+      ),
     );
   }
 
@@ -195,6 +220,7 @@ class _ConfigUserState extends State<ConfigUser> {
           ),
           child: const Text('Cancelar', style: TextStyle(color: Colors.grey)),
         ),
+        const SizedBox(width: 12),
         ElevatedButton(
           onPressed: _saveChanges,
           style: ElevatedButton.styleFrom(
