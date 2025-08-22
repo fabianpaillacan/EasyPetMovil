@@ -1,46 +1,62 @@
-import 'package:easypet/core/services/auth_service.dart';
+import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:easypet/core/services/user_service.dart';
 
-class ConfigurationController {
-  static Future<Map<String, dynamic>> getUserInfo() async {
-    try {
-      // Use mock token for development
-      const mockToken = "dev_token_123";
-      final result = await AuthService.getProfile(mockToken);
-      return {
-        'success': result.success,
-        'message': result.message,
-        'user': {'email': 'dev@example.com', 'name': 'Dev User'},
-      };
-    } catch (e) {
-      return {
-        'success': false,
-        'message': 'Error getting user info: $e',
-      };
-    }
-  }
-
-  static Future<Map<String, dynamic>> updateUserInfo(Map<String, dynamic> userData) async {
-    try {
-      // Use mock token for development
-      const mockToken = "dev_token_123";
-      final result = await AuthService.updateProfile(mockToken, userData);
-      return {
-        'success': result.success,
-        'message': result.message,
-      };
-    } catch (e) {
-      return {
-        'success': false,
-        'message': 'Error updating user info: $e',
-      };
-    }
-  }
-
+class ConfigurationController with ChangeNotifier {
   static Future<Map<String, dynamic>> getConfigUser() async {
-    return await getUserInfo();
+    try {
+      // Obtener usuario actual de Firebase
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        debugPrint('Usuario no autenticado');
+        return {};
+      }
+
+      // Obtener token de Firebase
+      final token = await user.getIdToken();
+      if (token == null) {
+        debugPrint('Error al obtener token de Firebase');
+        return {};
+      }
+
+      // Usar tu servicio de usuario que se conecta a MongoDB
+      final userData = await UserService.getUserInfo(token);
+      debugPrint('Datos del usuario obtenidos: $userData');
+      
+      return userData;
+    } catch (e) {
+      debugPrint('Error al obtener información del usuario: $e');
+      return {};
+    }
   }
 
-  static Future<void> updateConfigUser(Map<String, dynamic> userData) async {
-    await updateUserInfo(userData);
+  static Future<void> updateConfigUser(Map<String, dynamic> data) async {
+    try {
+      // Obtener usuario actual de Firebase
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        debugPrint('Usuario no autenticado');
+        return;
+      }
+
+      // Obtener token de Firebase
+      final token = await user.getIdToken();
+      if (token == null) {
+        debugPrint('Error al obtener token de Firebase');
+        return;
+      }
+
+      // Limpiar datos antes de enviar
+      final sanitizedData = Map<String, dynamic>.from(data);
+      sanitizedData.remove('password');
+
+      // Usar tu servicio de usuario que se conecta a MongoDB
+      final result = await UserService.updateUserInfo(sanitizedData, token);
+      debugPrint('Usuario actualizado exitosamente: $result');
+      
+    } catch (e) {
+      debugPrint('Error al actualizar usuario: $e');
+      throw Exception('Error al actualizar usuario: $e');
+    }
   }
 }
