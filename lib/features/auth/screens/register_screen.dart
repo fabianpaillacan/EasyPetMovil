@@ -20,12 +20,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController birthDateController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
-  final TextEditingController genderController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController = TextEditingController();
 
+  String? selectedGender;
+  String? result;
+
   Future<void> registerUser() async {
     if (!_formKey.currentState!.validate()) return;
+
+    if(selectedGender == null){
+      setState(() {
+        result = 'Por favor selecciona un Género.';
+      });
+      return;
+    }
 
     // Llamar al backend para registrar el usuario
     final response = await _registerController.registerUser(
@@ -35,7 +44,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       birthDate: birthDateController.text.trim(),
       phone: phoneController.text.trim(),
       email: emailController.text.trim(),
-      gender: genderController.text.trim(),
+      gender: selectedGender!, // ← CORREGIDO: Usar selectedGender en lugar del controller
       password: passwordController.text,
     );
 
@@ -226,15 +235,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       },
                     ),
                   ),
-                  const SizedBox(width: 12.0),
+                  const SizedBox(width: 12.0), // ← AÑADIDO: SizedBox faltante
                   Expanded(
-                    child: _buildTextField(
-                      controller: genderController,
-                      label: 'Género',
-                      hint: 'Masculino/Femenino',
-                      icon: Icons.transgender,
-                      validator: (value) => value == null || value.isEmpty ? 'Campo requerido' : null,
-                    ),
+                    child: _buildGenderDropdown(), // ← CORREGIDO: Dropdown con ancho correcto
                   ),
                 ],
               ),
@@ -316,7 +319,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                   ),
                 ),
-                            ),
+              ),
               const SizedBox(height: 16.0),
               
               // Enlace para ir a login
@@ -346,6 +349,60 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildGenderDropdown() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: DropdownButtonFormField<String>(
+        value: selectedGender,
+        decoration: InputDecoration(
+          labelText: 'Género',
+          prefixIcon: const Icon(Icons.transgender, color: Colors.deepPurple), // ← CORREGIDO: Icono más apropiado
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.0),
+            borderSide: BorderSide.none,
+          ),
+          filled: true,
+          fillColor: Colors.white,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16.0,
+            vertical: 16.0,
+          ),
+        ),
+        items: const [
+          DropdownMenuItem(
+            value: 'Masculino',
+            child: Text('Masculino'),
+          ),
+          DropdownMenuItem(
+            value: 'Femenino',
+            child: Text('Femenino'),
+          ),
+          DropdownMenuItem(
+            value: 'Otro',
+            child: Text('Otro'),
+          ),
+        ],
+        onChanged: (String? newValue) {
+          setState(() {
+            selectedGender = newValue;
+          });
+        },
+        validator: (value) => value == null ? 'Selecciona el género' : null,
       ),
     );
   }
