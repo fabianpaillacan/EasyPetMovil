@@ -45,7 +45,26 @@ class _ConfigUserState extends State<ConfigUser> {
       _birthDateController.text = userInfo['birth_date'] ?? '';
       _emailController.text = userInfo['email'] ?? '';
       _phoneController.text = userInfo['phone'] ?? '';
-      selectedGender = userInfo['gender'] ?? ''; // ← CORREGIDO: Asignar a selectedGender
+      
+       // Mapear el género desde Firebase a los valores del dropdown
+       final genderFromAPI = userInfo['gender'] ?? '';
+       if (genderFromAPI.isNotEmpty) {
+         // Solo manejar los tres valores exactos del dropdown
+         if (genderFromAPI == 'Masculino') {
+           selectedGender = 'Masculino';
+         } else if (genderFromAPI == 'Femenino') {
+           selectedGender = 'Femenino';
+         } else if (genderFromAPI == 'Otro') {
+           selectedGender = 'Otro';
+         } else {
+           // Si no coincide exactamente, no seleccionar nada
+           selectedGender = null;
+           print('DEBUG - Género no reconocido: "$genderFromAPI"');
+         }
+       } else {
+         selectedGender = null;
+       }
+      
       _isLoading = false;
     });
   }
@@ -107,13 +126,8 @@ class _ConfigUserState extends State<ConfigUser> {
                     'Ej: example@gmail.com',
                   ),
                   const SizedBox(height: 16),
-                  _buildTextField(
-                    'Teléfono',
-                    _phoneController,
-                    'Ej: 912345678',
-                  ),
+                  _buildPhoneField(),
                   const SizedBox(height: 16),
-                  // ← CORREGIDO: Widget de género correctamente colocado
                   _buildGenderSection(),
                   const SizedBox(height: 32),
                   _buildActionButtons(),
@@ -156,6 +170,59 @@ class _ConfigUserState extends State<ConfigUser> {
   }
 
   // ← CORREGIDO: Widget separado para la sección de género
+  Widget _buildPhoneField() {
+      return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        'Teléfono',
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      ),
+      const SizedBox(height: 8),
+      TextField(
+        controller: _phoneController,
+        keyboardType: TextInputType.phone,
+        decoration: InputDecoration(
+          hintText: 'Ej: 912345678',
+          prefixIcon: Padding(
+            padding: const EdgeInsets.only(left: 12, right: 8),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  '🇨🇱', // Bandera de Chile como emoji
+                  style: TextStyle(fontSize: 16),
+                ),
+                const SizedBox(width: 6),
+                const Text(
+                  '+56', 
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  height: 20,
+                  width: 1,
+                  color: Colors.grey.shade300,
+                ),
+              ],
+            ),
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 14,
+          ),
+        ),
+      ),
+    ],
+  );
+  }
+
   Widget _buildGenderSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -170,43 +237,52 @@ class _ConfigUserState extends State<ConfigUser> {
     );
   }
 
-  Widget _buildGenderDropdown() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8.0),
-        border: Border.all(color: Colors.grey.shade300),
+Widget _buildGenderDropdown() {
+  return Container(
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(8.0),
+      border: Border.all(color: Colors.grey.shade300),
+    ),
+    child: DropdownButtonFormField<String>(
+      value: selectedGender,
+      decoration: InputDecoration(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        border: InputBorder.none,
+        prefixIcon: const Icon(Icons.transgender, color: Colors.deepPurple),
       ),
-      child: DropdownButtonFormField<String>(
-        value: selectedGender,
-        decoration: InputDecoration(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-          border: InputBorder.none,
-          prefixIcon: const Icon(Icons.transgender, color: Colors.deepPurple),
-        ),
-        items: const [
-          DropdownMenuItem(
-            value: 'Masculino',
+      items: [
+        DropdownMenuItem(
+          value: 'Masculino',
+          child: Padding(
+            padding: const EdgeInsets.only(top: 4.0), // Ajusta este valor
             child: Text('Masculino'),
           ),
-          DropdownMenuItem(
-            value: 'Femenino',
+        ),
+        DropdownMenuItem(
+          value: 'Femenino',
+          child: Padding(
+            padding: const EdgeInsets.only(top: 4.0), // Ajusta este valor
             child: Text('Femenino'),
           ),
-          DropdownMenuItem(
-            value: 'Otro',
+        ),
+        DropdownMenuItem(
+          value: 'Otro',
+          child: Padding(
+            padding: const EdgeInsets.only(top: 4.0), // Ajusta este valor
             child: Text('Otro'),
           ),
-        ],
-        onChanged: (String? newValue) {
-          setState(() {
-            selectedGender = newValue;
-          });
-        },
-        validator: (value) => value == null ? 'Selecciona el género' : null,
-      ),
-    );
-  }
+        ),
+      ],
+      onChanged: (String? newValue) {
+        setState(() {
+          selectedGender = newValue;
+        });
+      },
+      validator: (value) => value == null ? 'Selecciona el género' : null,
+    ),
+  );
+}
 
   Widget _buildActionButtons() {
     return Row(
