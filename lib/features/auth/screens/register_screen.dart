@@ -26,7 +26,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String? selectedGender;
   String? result;
 
-  Future<void> registerUser() async {
+  Future<void> _handleRegister() async {
     if (!_formKey.currentState!.validate()) return;
 
     if(selectedGender == null){
@@ -35,6 +35,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
       });
       return;
     }
+
+    print("=== FLUTTER REGISTER SCREEN: Form data captured ===");
+    print("First Name: '${firstNameController.text.trim()}'");
+    print("Last Name: '${lastNameController.text.trim()}'");
+    print("RUT: '${rutController.text.trim()}'");
+    print("Birth Date: '${birthDateController.text.trim()}'");
+    print("Phone: '${phoneController.text.trim()}'");
+    print("Email: '${emailController.text.trim()}'");
+    print("Gender: '$selectedGender'");
+    print("Password: '${passwordController.text.isNotEmpty ? '[PROVIDED]' : '[EMPTY]'}'");
+    print("=================================================");
 
     // Llamar al backend para registrar el usuario
     final response = await _registerController.registerUser(
@@ -47,6 +58,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
       gender: selectedGender!, // ← CORREGIDO: Usar selectedGender en lugar del controller
       password: passwordController.text,
     );
+
+    print("=== FLUTTER REGISTER SCREEN: Backend response ===");
+    print("Response: $response");
+    print("Success: ${response['success']}");
+    print("Message: ${response['message']}");
+    print("================================================");
 
     if (!mounted) return;
     
@@ -302,7 +319,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 width: double.infinity,
                 height: 56.0,
                 child: ElevatedButton(
-                  onPressed: registerUser,
+                  onPressed: _handleRegister,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.deepPurple,
                     foregroundColor: Colors.white,

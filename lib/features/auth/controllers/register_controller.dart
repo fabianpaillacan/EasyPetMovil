@@ -11,6 +11,17 @@ class RegisterController {
     required String gender,
     required String password,
   }) async {
+    print("=== FLUTTER REGISTER CONTROLLER: registerUser called ===");
+    print("First Name: $firstName");
+    print("Last Name: $lastName");
+    print("RUT: $rut");
+    print("Birth Date: $birthDate");
+    print("Phone: $phone");
+    print("Email: $email");
+    print("Gender: $gender");
+    print("Password: ${password.isNotEmpty ? '[PROVIDED]' : '[EMPTY]'}");
+    print("=====================================================");
+    
     try {
       final result = await AuthService.register(
         email, 
@@ -23,12 +34,22 @@ class RegisterController {
         gender: gender,
       );
       
+      print("=== FLUTTER REGISTER CONTROLLER: AuthService result ===");
+      print("Success: ${result.success}");
+      print("Message: ${result.message}");
+      print("Token: ${result.token?.substring(0, 20) ?? 'None'}...");
+      print("=====================================================");
+      
       return {
         'success': result.success,
         'message': result.message,
         'token': result.token,
       };
     } catch (e) {
+      print("=== FLUTTER REGISTER CONTROLLER: Error ===");
+      print("Error type: ${e.runtimeType}");
+      print("Error message: $e");
+      print("=========================================");
       return {
         'success': false,
         'message': 'Error al registrar usuario: $e',
