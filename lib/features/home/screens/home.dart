@@ -4,6 +4,7 @@ import 'package:easypet/features/pets/screens/pet_register_screen.dart';
 import 'package:easypet/features/pets/screens/pet_list_screen.dart';
 import 'package:easypet/features/updateUserInfo/screens/configurationScreen.dart';
 import 'package:easypet/features/updatePassword/screens/password.dart';
+import 'package:easypet/features/appointments/screens/appointment_selection_screen.dart';
 import 'package:easypet/core/widgets/custom_bottom_nav_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -104,9 +105,8 @@ class _HomeScreenState extends State<HomeScreen> {
       case 1:
         return const PetListScreen();
       case 2:
-        return const Center(
-          child: Text('Citas - Modo Desarrollo'),
-        );
+        // Mostrar pantalla de selección de mascotas para citas
+        return const AppointmentSelectionScreen();
       case 3:
         return const ConfigUser();
       default:
