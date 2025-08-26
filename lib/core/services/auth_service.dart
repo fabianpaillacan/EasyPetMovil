@@ -39,7 +39,17 @@ class AuthService {
     String? birthDate,
     String? gender,
   }) async {
-    return await _firebaseAuth.register(email, password);
+    return await _firebaseAuth.register(
+      email, 
+      password,
+      name: name,
+      phone: phone,
+      firstName: firstName,
+      lastName: lastName,
+      rut: rut,
+      birthDate: birthDate,
+      gender: gender,
+    );
   }
 
   static Future<AuthResult> getProfile(String token) async {
