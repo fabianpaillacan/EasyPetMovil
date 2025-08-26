@@ -108,7 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Text('Citas - Modo Desarrollo'),
         );
       case 3:
-        return const ConfigurationScreen();
+        return const ConfigUser();
       default:
         return const Center(
           child: Text('Inicio - Modo Desarrollo'),
