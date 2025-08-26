@@ -130,7 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   keyboardType: TextInputType.emailAddress,
                   decoration: const InputDecoration(
                     hintText: 'you@example.com',
-                    labelText: 'E-mail Address',
+                    labelText: 'Correo electrónico',
                     icon: Icon(Icons.email),
                     iconColor: Colors.deepPurple,
                   ),
@@ -148,8 +148,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   controller: passwordController,
                   obscureText: _obscurePassword,
                   decoration: InputDecoration(
-                    hintText: 'Password',
-                    labelText: 'Enter your password',
+                    hintText: 'Contraseña',
+                    labelText: 'Ingresa tu contraseña',
                     icon: const Icon(Icons.lock),
                     iconColor: Colors.deepPurple,
                     suffixIcon: IconButton(
@@ -172,10 +172,27 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                 ),
               ),
+              // Forgot password link - positioned below password input
+              Container(
+                width: double.infinity,
+                alignment: Alignment.centerRight,
+                margin: const EdgeInsets.only(top: 8.0),
+                child: GestureDetector(
+                  onTap: _isLoading ? null : navigateToForgotPassword,
+                  child: const Text(
+                    '¿Olvidaste tu contraseña?',
+                    style: TextStyle( 
+                      color: Colors.deepPurple,
+                      fontSize: 14.0,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+              ),
               // Error message display
               if (result.isNotEmpty)
                 Container(
-                  margin: const EdgeInsets.only(top: 10.0),
+                  margin: const EdgeInsets.only(top: 15.0),
                   padding: const EdgeInsets.all(10.0),
                   decoration: BoxDecoration(
                     color: _isSuccess ? Colors.green.shade50 : Colors.red.shade50,
@@ -191,19 +208,26 @@ class _LoginScreenState extends State<LoginScreen> {
                     textAlign: TextAlign.center,
                   ),
                 ),
+              // Login and Register buttons
               Container(
                 width: screenSize.width,
+                margin: const EdgeInsets.only(top: 25.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
+                    // Login button
                     Container(
                       height: 50.0,
-                      width: 250.0,
-                      margin: const EdgeInsets.only(left: 10.0, top: 20.0),
+                      width: double.infinity,
+                      margin: const EdgeInsets.symmetric(horizontal: 20.0),
                       child: ElevatedButton(
                         onPressed: _isLoading ? null : handleLogin,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.deepPurple,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          elevation: 2.0,
                         ),
                         child: _isLoading
                             ? const SizedBox(
@@ -215,15 +239,20 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               )
                             : const Text(
-                                'Login',
-                                style: TextStyle(color: Colors.white),
+                                'Iniciar Sesión',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                       ),
                     ),
+                    // Register button
                     Container(
                       height: 50.0,
-                      width: 250.0,
-                      margin: const EdgeInsets.only(left: 20.0, top: 20.0),
+                      width: double.infinity,
+                      margin: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
                       child: ElevatedButton(
                         onPressed: _isLoading ? null : navigateToRegister,
                         style: ElevatedButton.styleFrom(
@@ -232,28 +261,21 @@ class _LoginScreenState extends State<LoginScreen> {
                             color: Colors.deepPurple,
                             width: 2.0,
                           ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          elevation: 0.0,
                         ),
                         child: const Text(
-                          'Sign Up',
-                          style: TextStyle(color: Colors.deepPurple),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      height: 50.0,
-                      margin: const EdgeInsets.only(left: 20.0, top: 10.0),
-                      alignment: Alignment.center,
-                      child: GestureDetector(
-                        onTap: _isLoading ? null : navigateToForgotPassword,
-                        child: const Text(
-                          'Forgot Password?',
-                          style: TextStyle( 
-                            color: Colors.blue,
+                          'Registrarse',
+                          style: TextStyle(
+                            color: Colors.deepPurple,
                             fontSize: 16.0,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
