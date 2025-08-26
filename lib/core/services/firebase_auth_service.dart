@@ -116,8 +116,27 @@ class FirebaseAuthServiceImpl {
           'firebase_uid': userCredential.user?.uid,
           'name': name ?? firstName ?? lastName ?? '',
           'phone': phone ?? '',
+          'first_name': firstName,
+          'last_name': lastName,
+          'rut': rut,
+          'birth_date': birthDate,
+          'gender': gender,
           'created_at': DateTime.now().toIso8601String(),
         };
+        
+        print("=== FLUTTER: Sending data to backend ===");
+        print("User data to send: $userData");
+        print("Email: $email");
+        print("Firebase UID: ${userCredential.user?.uid}");
+        print("Name: ${name ?? firstName ?? lastName ?? ''}");
+        print("Phone: ${phone ?? ''}");
+        print("Last Name: ${lastName ?? ''}");
+        print("RUT: $rut");
+        print("Birth Date: $birthDate");
+        print("Gender: $gender");
+        print("API URL: ${EnvironmentConfig.apiBaseUrl}/users/firebase/sync");
+        print("Headers: Content-Type: application/json, Authorization: Bearer ${idToken?.substring(0, 20)}...");
+        print("=====================================");
         
         final response = await _httpClient.post(
           Uri.parse('${EnvironmentConfig.apiBaseUrl}/users/firebase/sync'),
@@ -128,8 +147,14 @@ class FirebaseAuthServiceImpl {
           body: json.encode(userData),
         );
 
+        print("=== FLUTTER: Backend response received ===");
+        print("Response status code: ${response.statusCode}");
+        print("Response body: ${response.body}");
+        print("=========================================");
+
         if (response.statusCode == 200 || response.statusCode == 201) {
           final data = json.decode(response.body);
+          print("Backend sync successful, data: $data");
           return AuthResult.success(
             "Usuario registrado exitosamente",
             token: idToken,
@@ -137,6 +162,7 @@ class FirebaseAuthServiceImpl {
         } else {
           // Even if backend sync fails, Firebase registration succeeded
           print("Backend sync failed with status: ${response.statusCode}");
+          print("Error response body: ${response.body}");
           return AuthResult.success(
             "Usuario registrado exitosamente en Firebase",
             token: idToken,
@@ -144,7 +170,10 @@ class FirebaseAuthServiceImpl {
         }
       } catch (backendError) {
         // If backend is not available, still return success for Firebase registration
-        print("Backend sync failed: $backendError");
+        print("=== FLUTTER: Backend sync error ===");
+        print("Error type: ${backendError.runtimeType}");
+        print("Error message: $backendError");
+        print("================================");
         return AuthResult.success(
           "Usuario registrado exitosamente en Firebase",
           token: idToken,
