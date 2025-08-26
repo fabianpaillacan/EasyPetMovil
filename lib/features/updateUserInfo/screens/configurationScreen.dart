@@ -1,16 +1,7 @@
 import 'package:easypet/features/updateUserInfo/controllers/configuration_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:easypet/features/home/screens/home.dart';
-
-// Wrapper class for HomeScreen compatibility
-class ConfigurationScreen extends StatelessWidget {
-  const ConfigurationScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const ConfigUser();
-  }
-}
+import 'package:google_fonts/google_fonts.dart';
 
 class ConfigUser extends StatefulWidget {
   const ConfigUser({super.key});
@@ -23,13 +14,14 @@ class _ConfigUserState extends State<ConfigUser> {
   Map<String, dynamic> userInfo = {};
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _rutController = TextEditingController();
   final TextEditingController _birthDateController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _genderController = TextEditingController();
-
+  
   bool _isLoading = true;
-
+  String? selectedGender;
+  
   @override
   void initState() {
     super.initState();
@@ -37,13 +29,13 @@ class _ConfigUserState extends State<ConfigUser> {
   }
 
   @override
-  void dispose() {
+  void dispose() {      
     _firstNameController.dispose();
     _lastNameController.dispose();
+    _rutController.dispose();
     _birthDateController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
-    _genderController.dispose();
     super.dispose();
   }
 
@@ -56,7 +48,25 @@ class _ConfigUserState extends State<ConfigUser> {
       _birthDateController.text = userInfo['birth_date'] ?? '';
       _emailController.text = userInfo['email'] ?? '';
       _phoneController.text = userInfo['phone'] ?? '';
-      _genderController.text = userInfo['gender'] ?? '';  //ojala poder hacer dropdown
+      _rutController.text = userInfo['rut'] ?? '';
+      // Mapear el género desde MongoDB a los valores del dropdown
+      final genderFromAPI = userInfo['gender'] ?? '';
+      if (genderFromAPI.isNotEmpty) {
+        // Solo manejar los tres valores exactos del dropdown
+        if (genderFromAPI == 'Masculino') {
+          selectedGender = 'Masculino';
+        } else if (genderFromAPI == 'Femenino') {
+          selectedGender = 'Femenino';
+        } else if (genderFromAPI == 'Otro') {
+          selectedGender = 'Otro';
+        } else {
+          // Si no coincide exactamente, no seleccionar nada
+          selectedGender = null;
+        }
+      } else {
+        selectedGender = null;
+      }
+      
       _isLoading = false;
     });
   }
@@ -68,7 +78,10 @@ class _ConfigUserState extends State<ConfigUser> {
       "birth_date": _birthDateController.text,
       "email": _emailController.text,
       "phone": _phoneController.text,
-      "gender": _genderController.text,
+      "gender": selectedGender!,
+      "rut": _rutController.text,  // Preservar RUT existente
+      "firebase_uid": userInfo['firebase_uid'] ?? '',  // Preservar
+      "veterinarian_id": userInfo['veterinarian_id'] ?? '',  // Preservar
     };
 
     await ConfigurationController.updateConfigUser(data);
@@ -81,139 +94,400 @@ class _ConfigUserState extends State<ConfigUser> {
         MaterialPageRoute(builder: (context) => const HomeScreen()),
         (route) => false,
       );
-
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Configuración de Usuario')),
-      body:
-          _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : SingleChildScrollView(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildTextField(
-                      'Nombre',
-                      _firstNameController,
-                      'Ej: Humberto',
-                    ),
-                    const SizedBox(height: 16),
-                    _buildTextField(
-                      'Apellido Paterno',
-                      _lastNameController,
-                      'Ej: Suazo',
-                    ),
-                    const SizedBox(height: 16),
-                    _buildTextField(
-                      'Fecha de Nacimiento',
-                      _birthDateController,
-                      'Ej: 10/03/2002',
-                    ),
-                    const SizedBox(height: 16),
-                    _buildTextField(
-                      'Correo Electrónico',
-                      _emailController,
-                      'Ej: example@gmail.com',
-                    ),
-                    const SizedBox(height: 16),
-                    _buildTextField(
-                      'Teléfono',
-                      _phoneController,
-                      'Ej: 912345678',
-                    ),
-                    const SizedBox(height: 16),
-                    _buildGenderField(),
-                    const SizedBox(height: 32),
-                    _buildActionButtons(),
-                  ],
-                ),
-              ),
-    );
-  }
-
-  Widget _buildTextField(
-    String label,
-    TextEditingController controller,
-    String hint, {
-    bool isPassword = false,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 8),
-        TextField(
-          controller: controller,
-          obscureText: isPassword,
-          decoration: InputDecoration(
-            hintText: hint,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 14,
-            ),
+      backgroundColor: const Color(0xFFF8F9FA),
+      appBar: AppBar(
+        title: Text(
+          'Configuración de Usuario',
+          style: GoogleFonts.poppins(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: const Color.fromARGB(255, 48, 45, 5),
           ),
         ),
-      ],
-    );
-  }
-
-  Widget _buildGenderField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Género',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 4),
-        TextField(
-          controller: _genderController,
-          decoration: InputDecoration(
-            hintText: 'Ingrese su género',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 14,
-            ),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios,
+            color: Color.fromARGB(255, 48, 45, 5),
           ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildActionButtons() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        OutlinedButton(
           onPressed: () => Navigator.pop(context),
-          style: OutlinedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            side: const BorderSide(color: Colors.grey),
-          ),
-          child: const Text('Cancelar', style: TextStyle(color: Colors.grey)),
         ),
-        ElevatedButton(
-          onPressed: _saveChanges,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.blue,
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+      ),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFFF8F9FA), Colors.white],
           ),
-          child: const Text('Guardar', style: TextStyle(color: Colors.white)),
         ),
-      ],
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : ListView(
+                padding: const EdgeInsets.all(16.0),
+                children: [
+                  _buildTextField(
+                    controller: _firstNameController,
+                    label: 'Nombre',
+                    hint: 'Ej: Humberto',
+                    icon: Icons.person,
+                    keyboardType: TextInputType.text,
+                    validator: (value) => value == null || value.isEmpty ? 'Campo requerido' : null,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildTextField(
+                    controller: _lastNameController,  
+                    label: 'Apellido Paterno',
+                    hint: 'Ej: Suazo',
+                    icon: Icons.person_outline,
+                    keyboardType: TextInputType.text,
+                    validator: (value) => value == null || value.isEmpty ? 'Campo requerido' : null,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildRutField(),  // Campo RUT de solo lectura
+                  const SizedBox(height: 16),
+                  _buildDateField(),
+                  const SizedBox(height: 16),
+                  _buildTextField(
+                    controller: _emailController,
+                    label: 'Correo Electrónico',
+                    hint: 'Ej: example@gmail.com',
+                    icon: Icons.email,
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (value) => value == null || value.isEmpty ? 'Campo requerido' : null,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildPhoneField(),
+                  const SizedBox(height: 16),
+                  _buildGenderDropdown(),
+                  const SizedBox(height: 24),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 56.0,
+                    child: ElevatedButton.icon(
+                      onPressed: _saveChanges,
+                      icon: const Icon(Icons.save, color: Colors.white),
+                      label: Text(
+                        'Guardar Cambios',
+                        style: GoogleFonts.poppins(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.deepPurple,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16.0),
+                        ),
+                        elevation: 2,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required String hint,
+    required IconData icon,
+    bool obscureText = false,
+    bool readOnly = false,
+    TextInputType? keyboardType,
+    String? Function(String?)? validator,
+    VoidCallback? onTap,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: TextFormField(
+        controller: controller,
+        obscureText: obscureText,
+        readOnly: readOnly,
+        keyboardType: keyboardType,
+        validator: validator,
+        onTap: onTap,
+        style: GoogleFonts.poppins(fontSize: 14),
+        decoration: InputDecoration(
+          labelText: label,
+          hintText: hint,
+          prefixIcon: Icon(icon, color: Colors.deepPurple),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.0),
+            borderSide: BorderSide.none,
+          ),
+          filled: true,
+          fillColor: Colors.white,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16.0,
+            vertical: 16.0,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPhoneField() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: TextFormField(
+        controller: _phoneController,
+        keyboardType: TextInputType.phone,
+        style: GoogleFonts.poppins(fontSize: 14),
+        decoration: InputDecoration(
+          labelText: 'Teléfono',
+          hintText: 'Ej: 912345678',
+          prefixIcon: Padding(
+            padding: const EdgeInsets.only(left: 12, right: 8),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  '🇨🇱', // Bandera de Chile como emoji
+                  style: TextStyle(fontSize: 16),
+                ),
+                const SizedBox(width: 6),
+                const Text(
+                  '+56', 
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  height: 20,
+                  width: 1,
+                  color: Colors.grey.shade300,
+                ),
+              ],
+            ),
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.0),
+            borderSide: BorderSide.none,
+          ),
+          filled: true,
+          fillColor: Colors.white,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16.0,
+            vertical: 16.0,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDateField() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: TextFormField(
+        controller: _birthDateController,
+        readOnly: true,
+        onTap: () async {
+          FocusScope.of(context).requestFocus(FocusNode());
+          DateTime? pickedDate = await showDatePicker(
+            context: context,
+            initialDate: DateTime.now(),
+            firstDate: DateTime(1900),
+            lastDate: DateTime.now(),
+            locale: const Locale('es', ''),
+          );
+          if (pickedDate != null) {
+            String formattedDate =
+                "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+            setState(() {
+              _birthDateController.text = formattedDate;
+            });
+          }
+        },
+        style: GoogleFonts.poppins(fontSize: 14),
+        decoration: InputDecoration(
+          labelText: 'Fecha de Nacimiento',
+          hintText: 'DD/MM/AAAA',
+          prefixIcon: Icon(Icons.calendar_today, color: Colors.deepPurple),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.0),
+            borderSide: BorderSide.none,
+          ),
+          filled: true,
+          fillColor: Colors.white,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16.0,
+            vertical: 16.0,
+          ),
+        ),
+        validator: (value) => value == null || value.isEmpty ? 'Campo requerido' : null,
+      ),
+    );
+  }
+
+  Widget _buildGenderDropdown() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: DropdownButtonFormField<String>(
+        value: selectedGender,
+        decoration: InputDecoration(
+          labelText: 'Género',
+          prefixIcon: Icon(Icons.transgender, color: Colors.deepPurple),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.0),
+            borderSide: BorderSide.none,
+          ),
+          filled: true,
+          fillColor: Colors.white,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16.0,
+            vertical: 16.0,
+          ),
+        ),
+        items: const [
+          DropdownMenuItem(
+            value: 'Masculino',
+            child: Text('Masculino'),
+          ),
+          DropdownMenuItem(
+            value: 'Femenino',
+            child: Text('Femenino'),
+          ),
+          DropdownMenuItem(
+            value: 'Otro',
+            child: Text('Otro'),
+          ),
+        ],
+        onChanged: (String? newValue) {
+          setState(() {
+            selectedGender = newValue;
+          });
+        },
+        validator: (value) => value == null ? 'Selecciona el género' : null,
+      ),
+    );
+  }
+
+  Widget _buildRutField() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey.shade100,  // Color gris para indicar que es de solo lectura
+        borderRadius: BorderRadius.circular(12.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: TextFormField(
+        controller: _rutController,
+        readOnly: true,  // Campo de solo lectura
+        enabled: false,  // Deshabilitado visualmente
+        style: GoogleFonts.poppins(
+          fontSize: 14,
+          color: Colors.grey.shade700,  // Color más oscuro para texto
+        ),
+        decoration: InputDecoration(
+          labelText: 'RUT (No editable)',
+          hintText: 'Ej: 12345678-9',
+          prefixIcon: Padding(
+            padding: const EdgeInsets.only(left: 12, right: 8),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  '🇨🇱',
+                  style: TextStyle(fontSize: 16),
+                ),
+                const SizedBox(width: 6),
+                const Text(
+                  'RUT',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  height: 20,
+                  width: 1,
+                  color: Colors.grey.shade300,
+                ),
+              ],
+            ),
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.0),
+            borderSide: BorderSide.none,
+          ),
+          filled: true,
+          fillColor: Colors.grey.shade100,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16.0,
+            vertical: 16.0,
+          ),
+          // Indicador visual de que es de solo lectura
+          suffixIcon: const Icon(
+            Icons.lock,
+            color: Colors.grey,
+            size: 20,
+          ),
+        ),
+      ),
     );
   }
 }
