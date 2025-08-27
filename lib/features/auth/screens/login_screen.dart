@@ -1,7 +1,7 @@
 import 'package:easypet/features/auth/controllers/login_controller.dart';
 import 'package:easypet/features/auth/screens/register_screen.dart';
 import 'package:easypet/features/auth/screens/forgotten_password.dart';
-import 'package:easypet/features/home/screens/home.dart';
+import 'package:easypet/core/navigation/main_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -56,7 +56,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (mounted) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          MaterialPageRoute(builder: (context) => const MainNavigation()),
         );
       }
     } else {
