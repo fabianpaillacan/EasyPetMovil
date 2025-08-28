@@ -55,11 +55,14 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
     ]; //aca se debe agregar el historial medico de la mascota, no esta en firebase. Depende del backend Web
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: BackButton(color: Colors.black),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
         centerTitle: true,
         title: const Text(
           "Detalles de la mascota",
@@ -96,32 +99,81 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                         : null,
                   ),
                   const SizedBox(height: 18),
-                  // Nombre
+                  // Solo el nombre de la mascota
                   Text(
                     petData!['name'],
                     style: const TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
+                      color: Colors.black,
                     ),
                   ),
-                  // Subtítulo (raza, especie, fecha de nacimiento)
-                  if (petData!['breed'] != null && petData!['species'] != null)
-                    Text(
-                      '${petData!['species']}, ${petData!['breed']}', //aca se debe agregar la raza de la mascota, no esta en firebase
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Color(0xFF4B8F7B),
-                        fontWeight: FontWeight.w500,
+                  const SizedBox(height: 32),
+                  // Sección de Información de la mascota
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Información de la mascota',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[900],
                       ),
                     ),
-                  if (petData!['birth_date'] != null)
-                    Text(
-                      'Nacido el ${petData!['birth_date']}', //aca se debe agregar la fecha de nacimiento de la mascota, no esta en firebase
-                      style: const TextStyle(
-                        fontSize: 15,
-                        color: Color(0xFF4B8F7B),
-                      ),
+                  ),
+                  const SizedBox(height: 16),
+                  // Grid de información en dos columnas
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[50],
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.grey[200]!),
                     ),
+                    child: Column(
+                      children: [
+                        _buildInfoRow('Nombre', petData!['name'] ?? 'N/A'),
+                        _buildInfoRow('Especie', petData!['species'] ?? 'N/A'),
+                        _buildInfoRow('Raza', petData!['breed'] ?? 'N/A'),
+                        _buildInfoRow('Edad', _calculateAge(petData!['birth_date'])),
+                        _buildInfoRow('Peso', '${petData!['weight'] ?? 'N/A'} kg'),
+                        _buildInfoRow('Color', petData!['color'] ?? 'N/A'),
+                        _buildInfoRow('Género', petData!['gender'] ?? 'N/A'),
+                        _buildInfoRow('Fecha de nacimiento', _formatDate(petData!['birth_date'])),
+                        // Última fila sin línea divisoria
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                flex: 2,
+                                child: Text(
+                                  'Número de microchip',
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Color(0xFF4B8F7B),
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 3,
+                                child: Text(
+                                  petData!['microchip'] ?? 'N/A',
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   const SizedBox(height: 28),
                   // Historial Médico
                   Align(
@@ -190,6 +242,78 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
     );
   }
 
+  Widget _buildInfoRow(String label, String value) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 2,
+                child: Text(
+                  label,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Color(0xFF4B8F7B),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 3,
+                child: Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        // Línea separativa
+        Divider(
+          height: 1,
+          thickness: 1,
+          color: Colors.grey[300],
+        ),
+      ],
+    );
+  }
+
+  String _calculateAge(String? birthDate) {
+    if (birthDate == null) return 'N/A';
+    try {
+      final birth = DateTime.parse(birthDate);
+      final now = DateTime.now();
+      final age = now.year - birth.year;
+      if (now.month < birth.month || (now.month == birth.month && now.day < birth.day)) {
+        return '${age - 1} años';
+      }
+      return '$age años';
+    } catch (e) {
+      return 'N/A';
+    }
+  }
+
+  String _formatDate(String? date) {
+    if (date == null) return 'N/A';
+    try {
+      final dateTime = DateTime.parse(date);
+      final months = [
+        'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+        'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+      ];
+      return '${dateTime.day} de ${months[dateTime.month - 1]} de ${dateTime.year}';
+    } catch (e) {
+      return date;
+    }
+  }
+
   IconData _getIconData(String iconName) {
     switch (iconName) {
       case 'event':
@@ -205,3 +329,4 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
     }
   }
 }
+
