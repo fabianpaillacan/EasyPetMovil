@@ -84,11 +84,21 @@ class PetControllerRegister {
         'is_active': true,
       };
       
+      print('DEBUG: Attempting to register pet with data: $petData');
       final result = await PetService.registerPet(petData, idToken);
+      print('DEBUG: Pet registration successful: $result');
       return 'Mascota registrada exitosamente';
     } catch (e) {
       print('DEBUG: Error in registerPets: $e');
-      return 'Error registering pet: $e';
+      
+      // Determinar si es un error de conexión real o un error de negocio
+      if (e.toString().contains('Error de conexión')) {
+        return 'Error de conexión. Verifica tu conexión a internet e intenta nuevamente.';
+      } else if (e.toString().contains('Error al registrar mascota')) {
+        return 'Error al registrar mascota. Verifica los datos e intenta nuevamente.';
+      } else {
+        return 'Error inesperado: $e';
+      }
     }
   }
 }
