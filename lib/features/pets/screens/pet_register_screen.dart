@@ -17,7 +17,6 @@ class _PetRegisterScreenState extends State<PetRegisterScreen> {
   final TextEditingController ageController = TextEditingController();
   final TextEditingController colorController = TextEditingController();
   final TextEditingController birthDateController = TextEditingController();
-  //final TextEditingController genderController = TextEditingController();
 
   // Eliminamos los controladores de texto para especie y raza
   // y usamos valores String para los dropdowns
@@ -82,12 +81,12 @@ class _PetRegisterScreenState extends State<PetRegisterScreen> {
 
   void registerPets() async {
     final name = nameController.text;
-    final breed = breedController.text; 
+    final breed = selectedBreed ?? 'Otra'; 
     //final weight = weightController.text; 
     final age = ageController.text; 
     final color = colorController.text; 
     final birthDate = birthDateController.text;
-     final species = selectedSpecies ?? '';
+    final species = selectedSpecies ?? '';
 
        // Validaciones
     if (selectedSpecies == null) {
