@@ -12,10 +12,18 @@ class PetService {
       if (response.success) {
         return response.data;
       } else {
+        // Si hay un error en la respuesta, lanzar directamente
         throw Exception(response.error ?? 'Error al registrar mascota');
       }
     } catch (e) {
-      throw Exception('Error de conexión: $e');
+      // Solo envolver en "Error de conexión" si es un error de red real
+      if (e.toString().contains('SocketException') || 
+          e.toString().contains('TimeoutException') ||
+          e.toString().contains('ConnectionException')) {
+        throw Exception('Error de conexión: $e');
+      }
+      // Para otros errores, re-lanzar sin envolver
+      rethrow;
     }
   }
   
@@ -30,7 +38,12 @@ class PetService {
         throw Exception(response.error ?? 'Error al obtener perfil de mascota');
       }
     } catch (e) {
-      throw Exception('Error de conexión: $e');
+      if (e.toString().contains('SocketException') || 
+          e.toString().contains('TimeoutException') ||
+          e.toString().contains('ConnectionException')) {
+        throw Exception('Error de conexión: $e');
+      }
+      rethrow;
     }
   }
   
@@ -41,7 +54,12 @@ class PetService {
       
       return response.success;
     } catch (e) {
-      throw Exception('Error de conexión: $e');
+      if (e.toString().contains('SocketException') || 
+          e.toString().contains('TimeoutException') ||
+          e.toString().contains('ConnectionException')) {
+        throw Exception('Error de conexión: $e');
+      }
+      rethrow;
     }
   }
   
@@ -56,7 +74,12 @@ class PetService {
         throw Exception(response.error ?? 'Error al obtener mascotas del usuario');
       }
     } catch (e) {
-      throw Exception('Error de conexión: $e');
+      if (e.toString().contains('SocketException') || 
+          e.toString().contains('TimeoutException') ||
+          e.toString().contains('ConnectionException')) {
+        throw Exception('Error de conexión: $e');
+      }
+      rethrow;
     }
   }
   
@@ -71,7 +94,12 @@ class PetService {
         throw Exception(response.error ?? 'Error al actualizar mascota');
       }
     } catch (e) {
-      throw Exception('Error de conexión: $e');
+      if (e.toString().contains('SocketException') || 
+          e.toString().contains('TimeoutException') ||
+          e.toString().contains('ConnectionException')) {
+        throw Exception('Error de conexión: $e');
+      }
+      rethrow;
     }
   }
   
@@ -86,7 +114,12 @@ class PetService {
         throw Exception(response.error ?? 'Error al obtener todas las mascotas');
       }
     } catch (e) {
-      throw Exception('Error de conexión: $e');
+      if (e.toString().contains('SocketException') || 
+          e.toString().contains('TimeoutException') ||
+          e.toString().contains('ConnectionException')) {
+        throw Exception('Error de conexión: $e');
+      }
+      rethrow;
     }
   }
 }
