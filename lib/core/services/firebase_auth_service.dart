@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import '../config/environment.dart';
 import 'auth_service.dart';
 
-class FirebaseAuthServiceImpl {
+class FirebaseAuthServiceImpl implements AuthService {
   final FirebaseAuth _firebaseAuth;
   final http.Client _httpClient;
 
@@ -14,55 +14,61 @@ class FirebaseAuthServiceImpl {
   }) : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
        _httpClient = httpClient ?? http.Client();
 
+  @override
   Future<AuthResult> login(String email, String password) async {
     try {
-      // Authenticate with Firebase
+      // Autenticación con Firebase
       final userCredential = await _firebaseAuth.signInWithEmailAndPassword(
         email: email.trim(),
         password: password.trim(),
       );
 
-      // Get user token
+      // Obtener el token del usuario
       final idToken = await userCredential.user?.getIdToken();
       if (idToken == null) {
         return AuthResult.failure("Error al obtener el token");
       }
       
-      print("Firebase login successful for: ${userCredential.user?.email}");
+      print("Token obtenido: ${idToken.substring(0, 20)}..."); // Debug log
       
-      // Return success with Firebase token (will be exchanged for JWT in main auth service)
-      return AuthResult.success(
-        "Login exitoso con Firebase",
-        accessToken: idToken,
+      // Exchange Firebase token for JWT tokens
+      final response = await _httpClient.post(
+        Uri.parse('${EnvironmentConfig.apiBaseUrl}/auth/firebase-login'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({
+          'id_token': idToken,
+        }),
       );
-    } catch (e) {
-      print("Firebase login error: $e");
-      String errorMessage = "Error en login";
-      
-      if (e is FirebaseAuthException) {
-        switch (e.code) {
-          case 'user-not-found':
-            errorMessage = "Usuario no encontrado";
-            break;
-          case 'wrong-password':
-            errorMessage = "Contraseña incorrecta";
-            break;
-          case 'invalid-email':
-            errorMessage = "Email inválido";
-            break;
-          case 'user-disabled':
-            errorMessage = "Usuario deshabilitado";
-            break;
-          default:
-            errorMessage = "Error de autenticación: ${e.message}";
-        }
+
+      print("Response status: ${response.statusCode}"); // Debug log
+      print("Response body: ${response.body}"); // Debug log
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return AuthResult.success(
+          data["message"] ?? "Login successful",
+          accessToken: data["access_token"],
+          refreshToken: data["refresh_token"],
+          expiresIn: data["expires_in"],
+          user: data["user"],
+        );
+      } else {
+        return AuthResult.failure(
+          "Error en backend: ${response.statusCode} ${response.body}",
+        );
       }
-      
-      return AuthResult.failure(errorMessage);
+    } catch (e) {
+      print("Error en login: $e"); // Debug log
+      return AuthResult.failure("Error en login: $e");
     }
   }
 
-  Future<AuthResult> register(String email, String password, {
+  @override
+  Future<AuthResult> register(
+    String email, 
+    String password, {
     String? name,
     String? phone,
     String? firstName,
@@ -72,61 +78,24 @@ class FirebaseAuthServiceImpl {
     String? gender,
   }) async {
     try {
-      // Create user in Firebase
+      // Crear usuario en Firebase
       final userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email.trim(),
         password: password.trim(),
       );
 
-      // Get user token
+      // Obtener el token del usuario
       final idToken = await userCredential.user?.getIdToken();
       if (idToken == null) {
         return AuthResult.failure("Error al obtener el token después del registro");
       }
 
-      print("Firebase registration successful for: ${userCredential.user?.email}");
-
-      // Return success with Firebase token (will be exchanged for JWT in main auth service)
       return AuthResult.success(
         "Usuario registrado exitosamente en Firebase",
         accessToken: idToken,
       );
     } catch (e) {
-      print("Firebase registration error: $e");
-      String errorMessage = "Error en registro";
-      
-      if (e is FirebaseAuthException) {
-        switch (e.code) {
-          case 'email-already-in-use':
-            errorMessage = "El email ya está en uso";
-            break;
-          case 'invalid-email':
-            errorMessage = "Email inválido";
-            break;
-          case 'operation-not-allowed':
-            errorMessage = "Registro no habilitado";
-            break;
-          case 'weak-password':
-            errorMessage = "Contraseña muy débil";
-            break;
-          default:
-            errorMessage = "Error de registro: ${e.message}";
-        }
-      }
-      
-      return AuthResult.failure(errorMessage);
+      return AuthResult.failure("Error en registro con Firebase: $e");
     }
-  }
-
-  Future<void> signOut() async {
-    await _firebaseAuth.signOut();
-  }
-
-  User? getCurrentUser() {
-    return _firebaseAuth.currentUser;
-  }
-
-  Stream<User?> get authStateChanges {
-    return _firebaseAuth.authStateChanges();
   }
 }
