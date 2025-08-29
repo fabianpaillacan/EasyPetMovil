@@ -34,7 +34,7 @@ class EnvironmentConfig {
   static String get appointmentServiceUrl {
     switch (_environment) {
       case Environment.dev:
-        return '$apiBaseUrl/appointments';
+        return '$apiBaseUrl';
       case Environment.prod:
         return 'https://appointment-service.easypet.com';
     }

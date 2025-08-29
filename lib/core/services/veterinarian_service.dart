@@ -1,11 +1,17 @@
 import '../config/environment.dart';
 import 'api_client.dart';
+import 'auth_service.dart';
 
 class VeterinarianService {
   static final ApiClient _client = ApiClient(baseUrl: EnvironmentConfig.veterinarianServiceUrl);
   
-  static Future<List<Map<String, dynamic>>> getVeterinarians(String token) async {
+  static Future<List<Map<String, dynamic>>> getVeterinarians() async {
     try {
+      final token = await AuthService.getValidToken();
+      if (token == null) {
+        throw Exception('No hay token válido disponible');
+      }
+      
       _client.setAuthToken(token);
       final response = await _client.get('/veterinarians');
       
@@ -19,8 +25,13 @@ class VeterinarianService {
     }
   }
   
-  static Future<Map<String, dynamic>> getVeterinarianProfile(String veterinarianId, String token) async {
+  static Future<Map<String, dynamic>> getVeterinarianProfile(String veterinarianId) async {
     try {
+      final token = await AuthService.getValidToken();
+      if (token == null) {
+        throw Exception('No hay token válido disponible');
+      }
+      
       _client.setAuthToken(token);
       final response = await _client.get('/veterinarians/$veterinarianId');
       
@@ -34,8 +45,13 @@ class VeterinarianService {
     }
   }
   
-  static Future<List<Map<String, dynamic>>> getVeterinarianAppointments(String veterinarianId, String token) async {
+  static Future<List<Map<String, dynamic>>> getVeterinarianAppointments(String veterinarianId) async {
     try {
+      final token = await AuthService.getValidToken();
+      if (token == null) {
+        throw Exception('No hay token válido disponible');
+      }
+      
       _client.setAuthToken(token);
       final response = await _client.get('/veterinarians/$veterinarianId/appointments');
       
@@ -49,8 +65,13 @@ class VeterinarianService {
     }
   }
   
-  static Future<Map<String, dynamic>> updateVeterinarianProfile(String veterinarianId, Map<String, dynamic> profileData, String token) async {
+  static Future<Map<String, dynamic>> updateVeterinarianProfile(String veterinarianId, Map<String, dynamic> profileData) async {
     try {
+      final token = await AuthService.getValidToken();
+      if (token == null) {
+        throw Exception('No hay token válido disponible');
+      }
+      
       _client.setAuthToken(token);
       final response = await _client.put('/veterinarians/$veterinarianId', body: profileData);
       

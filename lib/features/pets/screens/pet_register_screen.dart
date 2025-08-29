@@ -113,7 +113,7 @@ class _PetRegisterScreenState extends State<PetRegisterScreen> {
     final response = await PetControllerRegister.registerPets(
       name: name,
       breed: breed,
-      //weight: weight,
+      //weight: weightController.text,
       age: age,
       color: color,
       gender: selectedGender!,
@@ -393,11 +393,11 @@ class _PetRegisterScreenState extends State<PetRegisterScreen> {
         ),
         items: const [
           DropdownMenuItem(
-            value: 'Macho',
+            value: 'male',
             child: Text('Macho'),
           ),
           DropdownMenuItem(
-            value: 'Hembra',
+            value: 'female',
             child: Text('Hembra'),
           ),
         ],

@@ -1,11 +1,17 @@
 import '../config/environment.dart';
 import 'api_client.dart';
+import 'auth_service.dart';
 
 class AppointmentService {
   static final ApiClient _client = ApiClient(baseUrl: EnvironmentConfig.appointmentServiceUrl);
   
-  static Future<Map<String, dynamic>> createAppointment(Map<String, dynamic> appointmentData, String token) async {
+  static Future<Map<String, dynamic>> createAppointment(Map<String, dynamic> appointmentData) async {
     try {
+      final token = await AuthService.getValidToken();
+      if (token == null) {
+        throw Exception('No hay token válido disponible');
+      }
+      
       _client.setAuthToken(token);
       final response = await _client.post('/create', body: appointmentData);
       
@@ -19,8 +25,13 @@ class AppointmentService {
     }
   }
   
-  static Future<Map<String, dynamic>> getAppointment(String appointmentId, String token) async {
+  static Future<Map<String, dynamic>> getAppointment(String appointmentId) async {
     try {
+      final token = await AuthService.getValidToken();
+      if (token == null) {
+        throw Exception('No hay token válido disponible');
+      }
+      
       _client.setAuthToken(token);
       final response = await _client.get('/$appointmentId');
       
@@ -34,8 +45,13 @@ class AppointmentService {
     }
   }
   
-  static Future<List<Map<String, dynamic>>> getUserAppointments(String token) async {
+  static Future<List<Map<String, dynamic>>> getUserAppointments() async {
     try {
+      final token = await AuthService.getValidToken();
+      if (token == null) {
+        throw Exception('No hay token válido disponible');
+      }
+      
       _client.setAuthToken(token);
       final response = await _client.get('/user/appointments');
       
@@ -49,8 +65,13 @@ class AppointmentService {
     }
   }
   
-  static Future<bool> cancelAppointment(String appointmentId, String token) async {
+  static Future<bool> cancelAppointment(String appointmentId) async {
     try {
+      final token = await AuthService.getValidToken();
+      if (token == null) {
+        throw Exception('No hay token válido disponible');
+      }
+      
       _client.setAuthToken(token);
       final response = await _client.delete('/$appointmentId');
       
@@ -60,8 +81,13 @@ class AppointmentService {
     }
   }
   
-  static Future<Map<String, dynamic>> updateAppointment(String appointmentId, Map<String, dynamic> appointmentData, String token) async {
+  static Future<Map<String, dynamic>> updateAppointment(String appointmentId, Map<String, dynamic> appointmentData) async {
     try {
+      final token = await AuthService.getValidToken();
+      if (token == null) {
+        throw Exception('No hay token válido disponible');
+      }
+      
       _client.setAuthToken(token);
       final response = await _client.put('/$appointmentId', body: appointmentData);
       

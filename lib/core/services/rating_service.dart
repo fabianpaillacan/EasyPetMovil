@@ -1,11 +1,17 @@
 import '../config/environment.dart';
 import 'api_client.dart';
+import 'auth_service.dart';
 
 class RatingService {
   static final ApiClient _client = ApiClient(baseUrl: EnvironmentConfig.ratingServiceUrl);
   
-  static Future<Map<String, dynamic>> createRating(Map<String, dynamic> ratingData, String token) async {
+  static Future<Map<String, dynamic>> createRating(Map<String, dynamic> ratingData) async {
     try {
+      final token = await AuthService.getValidToken();
+      if (token == null) {
+        throw Exception('No hay token válido disponible');
+      }
+      
       _client.setAuthToken(token);
       final response = await _client.post('/ratings', body: ratingData);
       
@@ -19,8 +25,13 @@ class RatingService {
     }
   }
   
-  static Future<List<Map<String, dynamic>>> getVeterinarianRatings(String veterinarianId, String token) async {
+  static Future<List<Map<String, dynamic>>> getVeterinarianRatings(String veterinarianId) async {
     try {
+      final token = await AuthService.getValidToken();
+      if (token == null) {
+        throw Exception('No hay token válido disponible');
+      }
+      
       _client.setAuthToken(token);
       final response = await _client.get('/veterinarians/$veterinarianId/ratings');
       
@@ -34,8 +45,13 @@ class RatingService {
     }
   }
   
-  static Future<List<Map<String, dynamic>>> getMedicalCenterRatings(String centerId, String token) async {
+  static Future<List<Map<String, dynamic>>> getMedicalCenterRatings(String centerId) async {
     try {
+      final token = await AuthService.getValidToken();
+      if (token == null) {
+        throw Exception('No hay token válido disponible');
+      }
+      
       _client.setAuthToken(token);
       final response = await _client.get('/medical-centers/$centerId/ratings');
       
@@ -49,8 +65,13 @@ class RatingService {
     }
   }
   
-  static Future<Map<String, dynamic>> updateRating(String ratingId, Map<String, dynamic> ratingData, String token) async {
+  static Future<Map<String, dynamic>> updateRating(String ratingId, Map<String, dynamic> ratingData) async {
     try {
+      final token = await AuthService.getValidToken();
+      if (token == null) {
+        throw Exception('No hay token válido disponible');
+      }
+      
       _client.setAuthToken(token);
       final response = await _client.put('/ratings/$ratingId', body: ratingData);
       
@@ -64,8 +85,13 @@ class RatingService {
     }
   }
   
-  static Future<bool> deleteRating(String ratingId, String token) async {
+  static Future<bool> deleteRating(String ratingId) async {
     try {
+      final token = await AuthService.getValidToken();
+      if (token == null) {
+        throw Exception('No hay token válido disponible');
+      }
+      
       _client.setAuthToken(token);
       final response = await _client.delete('/ratings/$ratingId');
       

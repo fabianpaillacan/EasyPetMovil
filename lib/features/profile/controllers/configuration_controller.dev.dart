@@ -1,15 +1,13 @@
-import 'package:easypet/core/services/auth_service.dart';
+import 'package:easypet/core/services/user_service.dart';
 
 class ConfigurationController {
   static Future<Map<String, dynamic>> getUserInfo() async {
     try {
-      // Use mock token for development
-      const mockToken = "dev_token_123";
-      final result = await AuthService.getProfile(mockToken);
+      final userInfo = await UserService.getUserInfo();
       return {
-        'success': result.success,
-        'message': result.message,
-        'user': {'email': 'dev@example.com', 'name': 'Dev User'},
+        'success': true,
+        'message': 'User info retrieved successfully',
+        'user': userInfo,
       };
     } catch (e) {
       return {
@@ -21,12 +19,11 @@ class ConfigurationController {
 
   static Future<Map<String, dynamic>> updateUserInfo(Map<String, dynamic> userData) async {
     try {
-      // Use mock token for development
-      const mockToken = "dev_token_123";
-      final result = await AuthService.updateProfile(mockToken, userData);
+      final result = await UserService.updateUserInfo(userData);
       return {
-        'success': result.success,
-        'message': result.message,
+        'success': true,
+        'message': 'User info updated successfully',
+        'user': result,
       };
     } catch (e) {
       return {

@@ -9,6 +9,10 @@ class Pet {
   final bool isActive;
   final String createdAt;
   final String updatedAt;
+  final String? birthDate;
+  final String? gender;
+  final String? color;
+  final double? weight;
 
   Pet({
     required this.petId,
@@ -21,6 +25,10 @@ class Pet {
     required this.isActive,
     required this.createdAt,
     required this.updatedAt,
+    this.birthDate,
+    this.gender,
+    this.color,
+    this.weight,
   });
 
   factory Pet.fromJson(Map<String, dynamic> json) {
@@ -35,6 +43,10 @@ class Pet {
       isActive: json['is_active'] ?? true,
       createdAt: json['created_at'] ?? '',
       updatedAt: json['updated_at'] ?? '',
+      birthDate: json['birth_date']?.toString(),
+      gender: json['gender'],
+      color: json['color'],
+      weight: json['weight']?.toDouble(),
     );
   }
 
@@ -50,11 +62,15 @@ class Pet {
       'is_active': isActive,
       'created_at': createdAt,
       'updated_at': updatedAt,
+      'birth_date': birthDate,
+      'gender': gender,
+      'color': color,
+      'weight': weight,
     };
   }
 
   @override
   String toString() {
-    return 'Pet(petId: $petId, name: $name, species: $species, breed: $breed, age: $age, ownerId: $ownerId, imageUrl: $imageUrl, isActive: $isActive, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'Pet(petId: $petId, name: $name, species: $species, breed: $breed, age: $age, ownerId: $ownerId, imageUrl: $imageUrl, isActive: $isActive, createdAt: $createdAt, updatedAt: $updatedAt, birthDate: $birthDate, gender: $gender, color: $color, weight: $weight)';
   }
 }

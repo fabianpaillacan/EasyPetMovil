@@ -1,11 +1,17 @@
 import '../config/environment.dart';
 import 'api_client.dart';
+import 'auth_service.dart';
 
 class UserService {
   static final ApiClient _client = ApiClient(baseUrl: EnvironmentConfig.userServiceUrl);
   
-  static Future<Map<String, dynamic>> getUserInfo(String token) async {
+  static Future<Map<String, dynamic>> getUserInfo() async {
     try {
+      final token = await AuthService.getValidToken();
+      if (token == null) {
+        throw Exception('No hay token válido disponible');
+      }
+      
       _client.setAuthToken(token);
       // Corregir el endpoint para que coincida con el backend
       final response = await _client.get('/user/information');
@@ -23,7 +29,7 @@ class UserService {
           'phone': userData['phone'] ?? '',
           'gender': userData['gender'] ?? '',
           'rut': userData['rut'] ?? '',
-          'firebase_uid': userData['firebase_uid'] ?? '',
+          // Removed firebase_uid for security - mobile app should not handle Firebase UID
           'veterinarian_id': userData['veterinarian_id'] ?? '',
           'is_active': userData['is_active'] ?? true,
           'user_id': userData['user_id'] ?? '',
@@ -38,8 +44,13 @@ class UserService {
     }
   }
   
-  static Future<Map<String, dynamic>> updateUserInfo(Map<String, dynamic> userData, String token) async {
+  static Future<Map<String, dynamic>> updateUserInfo(Map<String, dynamic> userData) async {
     try {
+      final token = await AuthService.getValidToken();
+      if (token == null) {
+        throw Exception('No hay token válido disponible');
+      }
+      
       _client.setAuthToken(token);
       
       // Mapear los campos de la app móvil a los del backend
@@ -50,7 +61,7 @@ class UserService {
         'phone': userData['phone'] ?? '',
         'gender': userData['gender'] ?? '',
         'rut': userData['rut'] ?? '',  // Preservar RUT existente
-        'firebase_uid': userData['firebase_uid'] ?? '',  // Preservar
+        // Removed firebase_uid for security - mobile app should not handle Firebase UID
         'veterinarian_id': userData['veterinarian_id'] ?? '',  // Preservar
       };
       

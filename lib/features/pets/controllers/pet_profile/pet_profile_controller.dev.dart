@@ -3,9 +3,7 @@ import 'package:easypet/core/services/pet_service.dart';
 class PetProfileController {
   static Future<Map<String, dynamic>> getPetProfile(String petId) async {
     try {
-      // Use mock token for development
-      const mockToken = "dev_token_123";
-      final profile = await PetService.getPetProfile(petId, mockToken);
+      final profile = await PetService.getPetProfile(petId);
       return profile;
     } catch (e) {
       return {
@@ -17,9 +15,7 @@ class PetProfileController {
 
   static Future<bool> deletePet(String petId) async {
     try {
-      // Use mock token for development
-      const mockToken = "dev_token_123";
-      final result = await PetService.deletePet(petId, mockToken);
+      final result = await PetService.deletePet(petId);
       return result;
     } catch (e) {
       return false;

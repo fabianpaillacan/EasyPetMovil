@@ -80,7 +80,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       "phone": _phoneController.text,
       "gender": selectedGender!,
       "rut": _rutController.text,  // Preservar RUT existente
-      "firebase_uid": userInfo['firebase_uid'] ?? '',  // Preservar
+      // Removed firebase_uid for security - mobile app should not handle Firebase UID
       "veterinarian_id": userInfo['veterinarian_id'] ?? '',  // Preservar
     };
 
@@ -89,11 +89,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(const SnackBar(content: Text("Datos actualizados")));
-     Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => const MainNavigation()),
-        (route) => false,
-      );
+    // No need to navigate since we're already in MainNavigation
+    // Just refresh the user data
+    fetchUser();
   }
 
   @override
@@ -112,13 +110,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios,
-            color: Color.fromARGB(255, 48, 45, 5),
-          ),
-          onPressed: () => Navigator.pop(context),
-        ),
+        // Remove the back button since this is part of main navigation
+        automaticallyImplyLeading: false,
       ),
       body: Container(
         decoration: const BoxDecoration(

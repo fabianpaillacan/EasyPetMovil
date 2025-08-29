@@ -1,11 +1,17 @@
 import '../config/environment.dart';
 import 'api_client.dart';
+import 'auth_service.dart';
 
 class PetService {
   static final ApiClient _client = ApiClient(baseUrl: EnvironmentConfig.petServiceUrl);
   
-  static Future<Map<String, dynamic>> registerPet(Map<String, dynamic> petData, String token) async {
+  static Future<Map<String, dynamic>> registerPet(Map<String, dynamic> petData) async {
     try {
+      final token = await AuthService.getValidToken();
+      if (token == null) {
+        throw Exception('No hay token válido disponible');
+      }
+      
       _client.setAuthToken(token);
       final response = await _client.post('/', body: petData);
       
@@ -27,8 +33,13 @@ class PetService {
     }
   }
   
-  static Future<Map<String, dynamic>> getPetProfile(String petId, String token) async {
+  static Future<Map<String, dynamic>> getPetProfile(String petId) async {
     try {
+      final token = await AuthService.getValidToken();
+      if (token == null) {
+        throw Exception('No hay token válido disponible');
+      }
+      
       _client.setAuthToken(token);
       final response = await _client.get('/$petId');
       
@@ -47,8 +58,13 @@ class PetService {
     }
   }
   
-  static Future<bool> deletePet(String petId, String token) async {
+  static Future<bool> deletePet(String petId) async {
     try {
+      final token = await AuthService.getValidToken();
+      if (token == null) {
+        throw Exception('No hay token válido disponible');
+      }
+      
       _client.setAuthToken(token);
       final response = await _client.delete('/$petId');
       
@@ -63,8 +79,13 @@ class PetService {
     }
   }
   
-  static Future<List<Map<String, dynamic>>> getUserPets(String token) async {
+  static Future<List<Map<String, dynamic>>> getUserPets() async {
     try {
+      final token = await AuthService.getValidToken();
+      if (token == null) {
+        throw Exception('No hay token válido disponible');
+      }
+      
       _client.setAuthToken(token);
       final response = await _client.get('/');
       
@@ -83,8 +104,13 @@ class PetService {
     }
   }
   
-  static Future<Map<String, dynamic>> updatePet(String petId, Map<String, dynamic> petData, String token) async {
+  static Future<Map<String, dynamic>> updatePet(String petId, Map<String, dynamic> petData) async {
     try {
+      final token = await AuthService.getValidToken();
+      if (token == null) {
+        throw Exception('No hay token válido disponible');
+      }
+      
       _client.setAuthToken(token);
       final response = await _client.put('/$petId', body: petData);
       

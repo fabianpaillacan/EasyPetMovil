@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:easypet/features/appointments/models/appointment.dart';
 import 'package:easypet/features/appointments/services/appointment_service.dart';
-import 'package:easypet/core/services/firebase_auth_service.dart';
+import 'package:easypet/core/services/auth_service.dart';
 import 'package:intl/intl.dart';
 
 class AppointmentListScreen extends StatefulWidget {
@@ -40,35 +40,25 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
       print('🔍 [AppointmentListScreen] Cargando citas para mascota: ${widget.petName}');
       print('🔍 [AppointmentListScreen] Pet ID: ${widget.petId}');
 
-      // Obtener el token de Firebase (mismo método que usa PetController)
-      final currentUser = FirebaseAuthServiceImpl().getCurrentUser();
-      if (currentUser == null) {
+      // Obtener el token JWT válido usando AuthService
+      final token = await AuthService.getValidToken();
+      if (token == null) {
         setState(() {
-          _error = 'No hay usuario autenticado';
+          _error = 'No hay token válido disponible. Por favor, inicie sesión nuevamente.';
           _isLoading = false;
         });
         return;
       }
 
-      final idToken = await currentUser.getIdToken();
-      if (idToken == null) {
-        setState(() {
-          _error = 'No se pudo obtener el token de acceso';
-          _isLoading = false;
-        });
-        return;
-      }
-
-      print('🔍 [AppointmentListScreen] Token obtenido: ${idToken.substring(0, 20)}...');
+      print('🔍 [AppointmentListScreen] Token JWT obtenido: ${token.substring(0, 20)}...');
       setState(() {
-        _accessToken = idToken;
+        _accessToken = token;
       });
 
       // Load appointments for this pet
       print('🔍 [AppointmentListScreen] Llamando al servicio de citas...');
       final appointments = await AppointmentService.getAppointmentsByPet(
         petId: widget.petId,
-        token: idToken,
       );
 
       print('🔍 [AppointmentListScreen] Respuesta del servicio: success=${appointments.success}');
@@ -458,11 +448,8 @@ class _AppointmentListScreenState extends State<AppointmentListScreen> {
 
   Future<void> _cancelAppointment(String appointmentId) async {
     try {
-      if (_accessToken == null) return;
-
       final result = await AppointmentService.cancelAppointment(
         appointmentId: appointmentId,
-        token: _accessToken!,
       );
 
       if (result.success) {

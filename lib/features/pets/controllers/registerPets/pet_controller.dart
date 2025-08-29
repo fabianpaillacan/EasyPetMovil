@@ -1,33 +1,12 @@
 import 'package:easypet/core/services/pet_service.dart';
-import 'package:easypet/core/services/firebase_auth_service.dart';
+import 'package:easypet/core/services/auth_service.dart';
 
 class PetController {
   static Future<Map<String, dynamic>> registerPet(Map<String, dynamic> petData) async {
     try {
-      // Get current Firebase user
-      final currentUser = FirebaseAuthServiceImpl().getCurrentUser();
-      print('DEBUG: Current Firebase user: ${currentUser?.uid}');
-      print('DEBUG: Current Firebase user email: ${currentUser?.email}');
+      print('DEBUG: Registering pet using JWT tokens');
       
-      if (currentUser == null) {
-        return {
-          'success': false,
-          'message': 'Usuario no autenticado. Por favor inicie sesión.',
-        };
-      }
-
-      // Get Firebase ID token
-      final idToken = await currentUser.getIdToken();
-      print('DEBUG: Firebase ID token: ${idToken?.substring(0, 20)}...');
-      
-      if (idToken == null) {
-        return {
-          'success': false,
-          'message': 'Error al obtener el token de autenticación.',
-        };
-      }
-
-      final result = await PetService.registerPet(petData, idToken);
+      final result = await PetService.registerPet(petData);
       return {
         'success': true,
         'message': 'Mascota registrada exitosamente',
@@ -55,22 +34,7 @@ class PetControllerRegister {
     required String species,
   }) async {
     try {
-      // Get current Firebase user
-      final currentUser = FirebaseAuthServiceImpl().getCurrentUser();
-      print('DEBUG: Current Firebase user: ${currentUser?.uid}');
-      print('DEBUG: Current Firebase user email: ${currentUser?.email}');
-      
-      if (currentUser == null) {
-        return 'Usuario no autenticado. Por favor inicie sesión.';
-      }
-
-      // Get Firebase ID token
-      final idToken = await currentUser.getIdToken();
-      print('DEBUG: Firebase ID token: ${idToken?.substring(0, 20)}...');
-      
-      if (idToken == null) {
-        return 'Error al obtener el token de autenticación.';
-      }
+      print('DEBUG: Registering pet using JWT tokens');
 
       final petData = {
         'name': name,
@@ -85,7 +49,7 @@ class PetControllerRegister {
       };
       
       print('DEBUG: Attempting to register pet with data: $petData');
-      final result = await PetService.registerPet(petData, idToken);
+      final result = await PetService.registerPet(petData);
       print('DEBUG: Pet registration successful: $result');
       return 'Mascota registrada exitosamente';
     } catch (e) {

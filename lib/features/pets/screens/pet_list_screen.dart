@@ -10,14 +10,12 @@ class PetListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const PetList(token: "dev_token_123");
+    return const PetList();
   }
 }
 
 class PetList extends StatefulWidget {
-   final String token;
-
-  const PetList({super.key, required this.token});
+  const PetList({super.key});
 
   @override
   State<PetList> createState() => _PetListScreenState();

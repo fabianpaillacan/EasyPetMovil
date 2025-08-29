@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/appointment.dart';
+import '../../../core/config/environment.dart';
+import '../../../core/services/auth_service.dart';
 
 class ApiResponse<T> {
   final bool success;
@@ -17,14 +19,23 @@ class ApiResponse<T> {
 }
 
 class AppointmentService {
-  static const String baseUrl = 'http://10.0.2.2:8003'; // Para emulador Android
-  // static const String baseUrl = 'http://localhost:8003'; // Para dispositivo físico
+  // Use API Gateway instead of direct service access
+  static String get baseUrl => EnvironmentConfig.appointmentServiceUrl;
 
   static Future<ApiResponse<List<Appointment>>> getAppointmentsByPet({
     required String petId,
-    required String token,
   }) async {
     try {
+      // Get valid token from AuthService
+      final token = await AuthService.getValidToken();
+      if (token == null) {
+        return ApiResponse<List<Appointment>>(
+          success: false,
+          message: 'No hay token válido disponible. Por favor, inicie sesión nuevamente.',
+          error: 'AUTH_ERROR',
+        );
+      }
+
       print('🔍 [AppointmentService] Obteniendo citas para mascota: $petId');
       print('🔍 [AppointmentService] URL: $baseUrl/appointments?pet_id=$petId');
       print('🔍 [AppointmentService] Token: ${token.substring(0, 20)}...');
@@ -80,10 +91,18 @@ class AppointmentService {
     }
   }
 
-  static Future<ApiResponse<List<Appointment>>> getAllAppointments({
-    required String token,
-  }) async {
+  static Future<ApiResponse<List<Appointment>>> getAllAppointments() async {
     try {
+      // Get valid token from AuthService
+      final token = await AuthService.getValidToken();
+      if (token == null) {
+        return ApiResponse<List<Appointment>>(
+          success: false,
+          message: 'No hay token válido disponible. Por favor, inicie sesión nuevamente.',
+          error: 'AUTH_ERROR',
+        );
+      }
+
       print('🔍 [AppointmentService] Obteniendo todas las citas...');
       print('🔍 [AppointmentService] URL: $baseUrl/appointments');
       
@@ -130,9 +149,18 @@ class AppointmentService {
 
   static Future<ApiResponse<Appointment>> getAppointmentById({
     required String appointmentId,
-    required String token,
   }) async {
     try {
+      // Get valid token from AuthService
+      final token = await AuthService.getValidToken();
+      if (token == null) {
+        return ApiResponse<Appointment>(
+          success: false,
+          message: 'No hay token válido disponible. Por favor, inicie sesión nuevamente.',
+          error: 'AUTH_ERROR',
+        );
+      }
+
       print('🔍 [AppointmentService] Obteniendo cita por ID: $appointmentId');
       
       final response = await http.get(
@@ -176,9 +204,18 @@ class AppointmentService {
 
   static Future<ApiResponse<Appointment>> createAppointment({
     required Map<String, dynamic> appointmentData,
-    required String token,
   }) async {
     try {
+      // Get valid token from AuthService
+      final token = await AuthService.getValidToken();
+      if (token == null) {
+        return ApiResponse<Appointment>(
+          success: false,
+          message: 'No hay token válido disponible. Por favor, inicie sesión nuevamente.',
+          error: 'AUTH_ERROR',
+        );
+      }
+
       print('🔍 [AppointmentService] Creando cita...');
       print('🔍 [AppointmentService] Data: $appointmentData');
       
@@ -225,9 +262,18 @@ class AppointmentService {
   static Future<ApiResponse<Appointment>> updateAppointment({
     required String appointmentId,
     required Map<String, dynamic> updateData,
-    required String token,
   }) async {
     try {
+      // Get valid token from AuthService
+      final token = await AuthService.getValidToken();
+      if (token == null) {
+        return ApiResponse<Appointment>(
+          success: false,
+          message: 'No hay token válido disponible. Por favor, inicie sesión nuevamente.',
+          error: 'AUTH_ERROR',
+        );
+      }
+
       print('🔍 [AppointmentService] Actualizando cita: $appointmentId');
       print('🔍 [AppointmentService] Update data: $updateData');
       
@@ -273,9 +319,18 @@ class AppointmentService {
 
   static Future<ApiResponse<bool>> cancelAppointment({
     required String appointmentId,
-    required String token,
   }) async {
     try {
+      // Get valid token from AuthService
+      final token = await AuthService.getValidToken();
+      if (token == null) {
+        return ApiResponse<bool>(
+          success: false,
+          message: 'No hay token válido disponible. Por favor, inicie sesión nuevamente.',
+          error: 'AUTH_ERROR',
+        );
+      }
+
       print('🔍 [AppointmentService] Cancelando cita: $appointmentId');
       
       final response = await http.delete(
@@ -314,10 +369,19 @@ class AppointmentService {
   }
 
   static Future<ApiResponse<List<Appointment>>> getUpcomingAppointments({
-    required String token,
     int days = 30,
   }) async {
     try {
+      // Get valid token from AuthService
+      final token = await AuthService.getValidToken();
+      if (token == null) {
+        return ApiResponse<List<Appointment>>(
+          success: false,
+          message: 'No hay token válido disponible. Por favor, inicie sesión nuevamente.',
+          error: 'AUTH_ERROR',
+        );
+      }
+
       print('🔍 [AppointmentService] Obteniendo citas próximas (${days} días)...');
       
       final response = await http.get(

@@ -135,10 +135,10 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                         _buildInfoRow('Nombre', petData!['name'] ?? 'N/A'),
                         _buildInfoRow('Especie', petData!['species'] ?? 'N/A'),
                         _buildInfoRow('Raza', petData!['breed'] ?? 'N/A'),
-                        _buildInfoRow('Edad', _calculateAge(petData!['birth_date'])),
-                        _buildInfoRow('Peso', '${petData!['weight'] ?? 'N/A'} kg'),
+                        _buildInfoRow('Edad', _formatAge(petData!['age'], petData!['birth_date'])),
+                        _buildInfoRow('Peso', _formatWeight(petData!['weight'])),
                         _buildInfoRow('Color', petData!['color'] ?? 'N/A'),
-                        _buildInfoRow('Género', petData!['gender'] ?? 'N/A'),
+                        _buildInfoRow('Género', _formatGender(petData!['gender'])),
                         _buildInfoRow('Fecha de nacimiento', _formatDate(petData!['birth_date'])),
                         // Última fila sin línea divisoria
                         Padding(
@@ -160,7 +160,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                               Expanded(
                                 flex: 3,
                                 child: Text(
-                                  petData!['microchip'] ?? 'N/A',
+                                  petData!['microchip_number'] ?? 'N/A',
                                   style: const TextStyle(
                                     fontSize: 14,
                                     color: Colors.black,
@@ -285,19 +285,43 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
     );
   }
 
-  String _calculateAge(String? birthDate) {
-    if (birthDate == null) return 'N/A';
-    try {
-      final birth = DateTime.parse(birthDate);
-      final now = DateTime.now();
-      final age = now.year - birth.year;
-      if (now.month < birth.month || (now.month == birth.month && now.day < birth.day)) {
-        return '${age - 1} años';
-      }
+  String _formatAge(int? age, String? birthDate) {
+    if (age != null) {
       return '$age años';
-    } catch (e) {
+    } else if (birthDate != null) {
+      try {
+        final birth = DateTime.parse(birthDate);
+        final now = DateTime.now();
+        final age = now.year - birth.year;
+        if (now.month < birth.month || (now.month == birth.month && now.day < birth.day)) {
+          return '${age - 1} años';
+        }
+        return '$age años';
+      } catch (e) {
+        return 'N/A';
+      }
+    } else {
       return 'N/A';
     }
+  }
+
+  String _formatWeight(dynamic weight) {
+    if (weight == null || weight == 0 || weight == 0.0) {
+      return 'Todavía no me pesan';
+    }
+    if (weight is int) {
+      return '$weight kg';
+    } else if (weight is double) {
+      return '${weight.toStringAsFixed(1)} kg';
+    }
+    return weight.toString();
+  }
+
+  String _formatGender(dynamic gender) {
+    if (gender == null) return 'N/A';
+    if (gender == 'male') return 'Macho';
+    if (gender == 'female') return 'Hembra';
+    return gender;
   }
 
   String _formatDate(String? date) {

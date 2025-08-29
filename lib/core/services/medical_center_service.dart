@@ -1,11 +1,17 @@
 import '../config/environment.dart';
 import 'api_client.dart';
+import 'auth_service.dart';
 
 class MedicalCenterService {
   static final ApiClient _client = ApiClient(baseUrl: EnvironmentConfig.medicalCenterServiceUrl);
   
-  static Future<List<Map<String, dynamic>>> getMedicalCenters(String token) async {
+  static Future<List<Map<String, dynamic>>> getMedicalCenters() async {
     try {
+      final token = await AuthService.getValidToken();
+      if (token == null) {
+        throw Exception('No hay token válido disponible');
+      }
+      
       _client.setAuthToken(token);
       final response = await _client.get('/medical-centers');
       
@@ -19,8 +25,13 @@ class MedicalCenterService {
     }
   }
   
-  static Future<Map<String, dynamic>> getMedicalCenterProfile(String centerId, String token) async {
+  static Future<Map<String, dynamic>> getMedicalCenterProfile(String centerId) async {
     try {
+      final token = await AuthService.getValidToken();
+      if (token == null) {
+        throw Exception('No hay token válido disponible');
+      }
+      
       _client.setAuthToken(token);
       final response = await _client.get('/medical-centers/$centerId');
       
@@ -34,8 +45,13 @@ class MedicalCenterService {
     }
   }
   
-  static Future<List<Map<String, dynamic>>> getMedicalCenterVeterinarians(String centerId, String token) async {
+  static Future<List<Map<String, dynamic>>> getMedicalCenterVeterinarians(String centerId) async {
     try {
+      final token = await AuthService.getValidToken();
+      if (token == null) {
+        throw Exception('No hay token válido disponible');
+      }
+      
       _client.setAuthToken(token);
       final response = await _client.get('/medical-centers/$centerId/veterinarians');
       
@@ -49,8 +65,13 @@ class MedicalCenterService {
     }
   }
   
-  static Future<Map<String, dynamic>> updateMedicalCenterProfile(String centerId, Map<String, dynamic> profileData, String token) async {
+  static Future<Map<String, dynamic>> updateMedicalCenterProfile(String centerId, Map<String, dynamic> profileData) async {
     try {
+      final token = await AuthService.getValidToken();
+      if (token == null) {
+        throw Exception('No hay token válido disponible');
+      }
+      
       _client.setAuthToken(token);
       final response = await _client.put('/medical-centers/$centerId', body: profileData);
       

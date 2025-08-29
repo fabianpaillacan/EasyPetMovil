@@ -1,26 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:easypet/core/services/user_service.dart';
+import 'package:easypet/core/services/auth_service.dart';
 
 class ConfigurationController with ChangeNotifier {
   static Future<Map<String, dynamic>> getConfigUser() async {
     try {
-      // Obtener usuario actual de Firebase
-      final user = FirebaseAuth.instance.currentUser;
-      if (user == null) {
-        debugPrint('Usuario no autenticado');
-        return {};
-      }
-
-      // Obtener token de Firebase
-      final token = await user.getIdToken();
-      if (token == null) {
-        debugPrint('Error al obtener token de Firebase');
-        return {};
-      }
-
-      // Usar tu servicio de usuario que se conecta a MongoDB
-      final userData = await UserService.getUserInfo(token);
+      // Usar el nuevo auth service que maneja JWT tokens
+      final userData = await UserService.getUserInfo();
       debugPrint('Datos del usuario obtenidos de MongoDB: $userData');
       
       return userData;
@@ -37,37 +23,26 @@ class ConfigurationController with ChangeNotifier {
         throw Exception('Datos de usuario inválidos');
       }
 
-      // Obtener usuario actual de Firebase
-      final user = FirebaseAuth.instance.currentUser;
-      if (user == null) {
-        debugPrint('Usuario no autenticado');
-        return;
-      }
-
-      // Obtener token de Firebase
-      final token = await user.getIdToken();
-      if (token == null) {
-        debugPrint('Error al obtener token de Firebase');
-        return;
-      }
-
-      // Limpiar datos antes de enviar
+      // Limpiar datos antes de enviar - remover campos sensibles y strings vacíos
       final sanitizedData = Map<String, dynamic>.from(data);
       sanitizedData.remove('password');
       sanitizedData.remove('email'); // No permitir cambiar email desde aquí
       
+      // Remover strings vacíos para evitar sobrescribir datos existentes
+      sanitizedData.removeWhere((key, value) => 
+        value is String && value.trim().isEmpty
+      );
+      
       // Preservar campos sensibles que no deben modificarse
-      if (data['firebase_uid'] != null) {
-        sanitizedData['firebase_uid'] = data['firebase_uid'];
-      }
-      if (data['veterinarian_id'] != null) {
+      // Removed firebase_uid preservation for security - backend should not receive Firebase UID from mobile app
+      if (data['veterinarian_id'] != null && data['veterinarian_id'].toString().isNotEmpty) {
         sanitizedData['veterinarian_id'] = data['veterinarian_id'];
       }
 
       debugPrint('Enviando datos actualizados a MongoDB: $sanitizedData');
 
-      // Usar tu servicio de usuario que se conecta a MongoDB
-      final result = await UserService.updateUserInfo(sanitizedData, token);
+      // Usar el nuevo auth service que maneja JWT tokens
+      final result = await UserService.updateUserInfo(sanitizedData);
       debugPrint('Usuario actualizado exitosamente en MongoDB: $result');
       
     } catch (e) {
