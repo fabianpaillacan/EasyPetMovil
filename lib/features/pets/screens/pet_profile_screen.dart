@@ -235,7 +235,17 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                             ),
                           ],
                         ),
-                      )),
+                      )),  
+                  const SizedBox(width: 16),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: IconButton(
+                      onPressed: () {
+                        PetProfileController.deletePet(widget.petId);
+                      },
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                    ),
+                  ),
                 ],
               ),
             ),
