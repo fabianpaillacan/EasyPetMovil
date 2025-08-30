@@ -72,6 +72,12 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
+        actions: [
+          IconButton(
+            onPressed: () => showDialogDeletePet(),
+            icon: const Icon(Icons.delete, color: Colors.red),
+          ),
+        ],
       ),
       body: isLoading || petData == null
           ? const Center(child: CircularProgressIndicator())
@@ -130,7 +136,9 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(color: Colors.grey[200]!),
                     ),
+                    alignment: Alignment.centerRight,
                     child: Column(
+                      
                       children: [
                         _buildInfoRow('Nombre', petData!['name'] ?? 'N/A'),
                         _buildInfoRow('Especie', petData!['species'] ?? 'N/A'),
@@ -236,16 +244,7 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
                           ],
                         ),
                       )),  
-                  const SizedBox(width: 16),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: IconButton(
-                      onPressed: () {
-                        PetProfileController.deletePet(widget.petId);
-                      },
-                      icon: const Icon(Icons.delete, color: Colors.red),
-                    ),
-                  ),
+                  
                 ],
               ),
             ),
@@ -361,6 +360,37 @@ class _PetProfileScreenState extends State<PetProfileScreen> {
       default:
         return Icons.pets;
     }
+  }
+  void showDialogDeletePet() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Eliminar mascota'),
+                  content: Text(
+          '¿Estás seguro de que quieres eliminar a ${petData?['name'] ?? 'esta mascota'}?',
+          style: const TextStyle(fontSize: 16),
+        ),
+          actions: [
+            TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Cancelar')),
+                TextButton(
+            onPressed: () async {
+              Navigator.of(context).pop(); // Cerrar el diálogo
+              await PetProfileController.deletePet(widget.petId); // Ejecutar la eliminación
+            },
+            child: const Text(
+              'Eliminar',
+              style: TextStyle(
+                color: Colors.red,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          )
+          ],
+        );
+      },
+    );
   }
 }
 
