@@ -128,7 +128,7 @@ class _PetListScreenState extends State<PetList> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'ID: ${pet['pet_id']}',
+                          '${pet['species']} - ${pet['breed']}',
                           style: const TextStyle(
                             fontSize: 14,
                             color: Colors.grey,
